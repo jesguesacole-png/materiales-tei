@@ -118,6 +118,9 @@ td.f{white-space:normal}
 .c1{stroke:#1d4e89}.c2{stroke:#3d84c6}.c3{stroke:#e07a1f}.c4{stroke:#1f7a4d}.c5{stroke:#b4231b}
 .hooke{font-size:13px;fill:#1d4e89;font-weight:700}
 .pt{cursor:pointer;outline:none}
+.zone,.curve,.zt,.hooke,.axl{pointer-events:none}
+.pt circle.hit{fill:transparent!important;stroke:none!important}
+.pt:focus-visible circle:not(.hit){stroke-width:4}
 .pt circle{fill:#fff;stroke:var(--ink);stroke-width:2.5;transition:r .15s}
 .pt text{font-weight:800;font-size:16px;fill:var(--ink)}
 .pt:hover circle,.pt:focus circle,.pt.on circle{fill:var(--acc);stroke:var(--acc)}
@@ -271,6 +274,44 @@ details>summary::-webkit-details-marker{display:none}
   .btn-pdf{justify-content:center}
 }
 
+
+.prio{background:#fff8e6;border:1px solid #f0d58a;border-left:5px solid var(--acc);border-radius:12px;padding:12px 14px;margin:14px 0;font-size:.95rem}
+.prio a{font-weight:700;white-space:nowrap}
+.ce-txt{font-style:italic;color:var(--mut)}
+.crit{display:flex;gap:14px;align-items:flex-start;background:var(--pri-l);border-radius:12px;padding:14px;margin:12px 0;border:1px solid #c9daf0}
+.crit-n{flex:none;width:58px;height:58px;border-radius:14px;background:var(--pri);color:#fff;font-weight:800;font-size:1.3rem;display:grid;place-items:center}
+.crit p{margin:.3em 0 0}
+.tsec h3 .num{min-width:30px;width:auto;padding:0 6px}
+.check{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.check li{display:flex;gap:10px;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.check label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;flex:1;min-width:0}
+.check label span{min-width:0;overflow-wrap:anywhere}
+.check li{min-width:0}
+.check input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--ok)}
+.check li:has(input:checked){background:var(--ok-l);border-color:#b7dfc7}
+.check a{flex:none;font-size:.8rem;padding:4px 9px;border-radius:999px;background:var(--pri-l);color:var(--pri-d);text-decoration:none;font-weight:650}
+html.printing .prio{display:none}
+html.printing .check a{display:none}
+html.printing[data-print="enun"] .panel[data-panel="evaluacion"],html.printing[data-print="sol"] .panel[data-panel="evaluacion"]{display:none!important}
+@media (max-width:480px){.check li{flex-direction:column;align-items:flex-start}.crit{flex-direction:column}}
+
+
+.pond{display:flex;gap:6px;margin:6px 0 4px;min-height:86px}
+.pd{border-radius:12px;color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px 6px;min-width:0}
+.pd b{font-size:1.6rem;line-height:1.1}
+.pd span{font-size:.9rem;font-weight:600}
+.p1{background:var(--pri)}.p2{background:var(--pri-d)}.p3{background:var(--acc)}
+@media (max-width:480px){.pd b{font-size:1.25rem}.pd span{font-size:.78rem}}
+
+
+.crit-n{display:flex;flex-direction:column;justify-content:center;align-items:center;line-height:1.05;width:64px;height:64px}
+.crit-n small{font-size:.72rem;font-weight:700;opacity:.9;margin-top:3px}
+.crit.c15{background:var(--acc-l);border-color:#f4c99d}
+.crit.c15 .crit-n{background:var(--acc)}
+.crit-det{margin-top:12px}
+.box.b15{background:var(--acc-l);border-color:#f4c99d}
+.crit-det li{margin:3px 0}
+
 /* ---------- impresión / PDF ---------- */
 @page{size:A4;margin:14mm 12mm}
 html.printing body{background:#fff;font-size:12.5px}
@@ -299,7 +340,7 @@ html.printing[data-print="enun"] .sol,html.printing[data-print="enun"] .panel:no
 html.printing[data-print="enun"] .panel[data-panel="problemas"] .ph,html.printing[data-print="sol"] .panel[data-panel="problemas"] .ph{page-break-before:avoid}
 html.printing[data-print="enun"] .card{page-break-inside:avoid;break-inside:avoid}
 html.printing[data-print="enun"] .ph::after{content:" · enunciados"}
-html.printing[data-print="enun"] .panel[data-panel="problemas"]::before,html.printing[data-print="sol"] .panel[data-panel="problemas"]::before{content:"Ensayo de tracción y materiales · Tecnología e Ingeniería I · IES Murcia";display:block;text-align:center;font-weight:700;color:var(--pri-d);border-bottom:3px solid var(--pri);padding:8px 0 10px;margin-bottom:10px}
+html.printing[data-print="enun"] .panel[data-panel="problemas"]::before,html.printing[data-print="sol"] .panel[data-panel="problemas"]::before{content:"Ensayo de tracción y materiales · Tecnología e Ingeniería I";display:block;text-align:center;font-weight:700;color:var(--pri-d);border-bottom:3px solid var(--pri);padding:8px 0 10px;margin-bottom:10px}
 html.printing .card[hidden]{display:block!important}
 html.printing .tablewrap{overflow:visible}
 html.printing .eq{overflow:visible;white-space:normal}
@@ -334,7 +375,7 @@ html.printing .enun{padding:8px 10px}
 <div class="app">
 <header class="top">
   <div class="brand"><div class="logo" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M6,8 L16,8 L16,14 Q16,17 19,17 L21,17 Q24,17 24,14 L24,8 L34,8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><path d="M6,32 L16,32 L16,26 Q16,23 19,23 L21,23 Q24,23 24,26 L24,32 L34,32" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><path d="M20,2 V6 M20,34 V38" stroke="#ffd29a" stroke-width="3" stroke-linecap="round"/></svg></div>
-  <div><h1>Ensayo de tracción y materiales</h1><p>Tecnología e Ingeniería I · 1.º de Bachillerato · IES Murcia</p></div></div>
+  <div><h1>Ensayo de tracción y materiales</h1><p>Tecnología e Ingeniería I · 1.º de Bachillerato</p></div></div>
   <div class="pdfbar">
     <label for="pdfMode" class="sr">Contenido del PDF</label>
     <select id="pdfMode"><option value="all">Todo (teoría + problemas resueltos)</option><option value="enun">Solo enunciados</option><option value="sol">Problemas con soluciones</option><option value="teoria">Solo teoría, guion y unidades</option></select>
@@ -344,6 +385,7 @@ html.printing .enun{padding:8px 10px}
 <div class="pdfmsg" id="pdfMsg" hidden></div>
 <nav class="tabs" role="tablist" aria-label="Secciones">
   <button role="tab" data-tab="inicio" aria-selected="true">Inicio</button>
+  <button role="tab" data-tab="evaluacion">Evaluación</button>
   <button role="tab" data-tab="teoria">Teoría</button>
   <button role="tab" data-tab="guia">Cómo resolver</button>
   <button role="tab" data-tab="unidades">Unidades y fórmulas</button>
@@ -353,12 +395,13 @@ html.printing .enun{padding:8px 10px}
 <main id="content">
 
 <section class="panel active" id="p-inicio" data-panel="inicio">
-  <div class="print-cover"><h1>Ensayo de tracción y materiales</h1><p>Tecnología e Ingeniería I · 1.º de Bachillerato · IES Murcia</p><ol><li>Teoría: materiales y ensayos</li><li>Cómo resolver problemas de tracción</li><li>Unidades y fórmulas</li><li>Problemas resueltos (42)</li><li>Solucionario</li></ol></div>
+  <div class="print-cover"><h1>Ensayo de tracción y materiales</h1><p>Tecnología e Ingeniería I · 1.º de Bachillerato</p><ol><li>Criterios de evaluación y pesos</li><li>Teoría: materiales y ensayos</li><li>Cómo resolver problemas de tracción</li><li>Unidades y fórmulas</li><li>Problemas resueltos (42)</li><li>Solucionario</li></ol></div>
   <div class="hero">
     <div><h2>Todo lo que necesitas para dominar los problemas de tracción</h2>
     <p>Teoría de materiales, un método paso a paso, unidades y <b>42 problemas resueltos</b> con pistas y soluciones detalladas.</p></div>
     <div class="hero-stats"><div><b>42</b><span>problemas</span></div><div><b>7</b><span>temas de teoría</span></div><div><b>8</b><span>pasos de método</span></div></div>
   </div>
+  <div class="prio"><b>Importante:</b> lo prioritario es lo que se ha explicado y trabajado en clase. Este material es una ayuda para repasar y resolver dudas. <a href="#" class="go-tab" data-tab="evaluacion">Ver los criterios de evaluación →</a></div>
   <h3 class="h-route">Ruta de estudio recomendada</h3>
   <div class="route">
     <a class="rt go-tab" data-tab="teoria"><span>1</span><b>Teoría</b><small>Propiedades, ensayos y plásticos</small></a>
@@ -373,11 +416,68 @@ html.printing .enun{padding:8px 10px}
   </div>
 </section>
 
+<section class="panel" id="p-evaluacion" data-panel="evaluacion">
+  <h2 class="ph">Criterios de evaluación</h2>
+  <div class="prio"><b>Importante:</b> lo prioritario es lo que se ha explicado y trabajado en clase. Este material es una ayuda para repasar y resolver dudas.</div>
+  <section class="tsec">
+    <h3><span class="num">CE</span> Criterios que se evalúan en este tema</h3>
+    <div class="crit"><div class="crit-n">2.2<small>70 %</small></div><div><b>Criterio de evaluación 2.2</b><p>Seleccionar los materiales, tradicionales o de nueva generación, adecuados para la fabricación de productos de calidad basándose en sus características técnicas y atendiendo a criterios de sostenibilidad de manera responsable y ética.</p></div></div>
+    <div class="crit c15"><div class="crit-n">1.5<small>30 %</small></div><div><b>Criterio de evaluación 1.5</b><p>Comunicar de manera eficaz y organizada las ideas y soluciones tecnológicas, empleando el soporte, la terminología y el rigor apropiados.</p></div></div>
+    <p class="small">Fuente: currículo de Tecnología e Ingeniería I de la Región de Murcia (coincide con el Real Decreto 243/2022).</p>
+  </section>
+  <section class="tsec">
+    <h3><span class="num">⚖</span> Peso de cada criterio en el examen</h3>
+    <div class="pond" role="img" aria-label="Peso en el examen: criterio 2.2, 70 %; criterio 1.5, 30 %">
+      <div class="pd p1" style="flex:70"><b>70 %</b><span>Criterio 2.2 · Contenido</span></div>
+      <div class="pd p3" style="flex:30"><b>30 %</b><span>Criterio 1.5 · Comunicación</span></div>
+    </div>
+    <div class="two crit-det">
+      <div class="box"><b>2.2 · Qué se valora (70 %)</b><ul>
+        <li>Conocer las <b>propiedades</b> de los materiales y los <b>ensayos</b> (tracción, dureza, resiliencia, fatiga).</li>
+        <li>Interpretar el <b>diagrama σ-ε</b> y sus puntos característicos.</li>
+        <li><b>Plantear bien</b> cada problema: elegir la fórmula adecuada y despejar correctamente.</li>
+        <li>Obtener <b>resultados correctos</b>.</li>
+        <li><b>Decidir si un material o una pieza sirve:</b> si trabaja en zona elástica, qué sección o diámetro mínimo necesita y qué fuerza máxima soporta.</li>
+        <li>Conocer los <b>plásticos</b> y valorar su <b>reciclado y sostenibilidad</b>.</li></ul></div>
+      <div class="box b15"><b>1.5 · Qué se valora (30 %)</b><ul>
+        <li><b>Datos organizados</b> al principio de cada problema.</li>
+        <li>Escribir la <b>fórmula general</b> antes de sustituir.</li>
+        <li><b>Unidades</b> en todos los pasos y en el resultado final.</li>
+        <li><b>Justificar las conclusiones</b> con una comparación, por ejemplo: «150 MPa &lt; 250 MPa → zona elástica».</li>
+        <li>Usar la <b>terminología correcta</b>: límite elástico, módulo de Young, alargamiento unitario…</li>
+        <li><b>Presentación</b> ordenada, limpia y legible, con el resultado destacado.</li></ul></div>
+    </div>
+  </section>
+  <section class="tsec">
+    <h3><span class="num">%</span> Cómo se calcula la nota</h3>
+    <div class="pond" role="img" aria-label="Ponderación: examen parcial 30 %, examen global 40 %, trabajo y proyecto 30 %">
+      <div class="pd p1" style="flex:30"><b>30 %</b><span>Examen parcial</span></div>
+      <div class="pd p2" style="flex:40"><b>40 %</b><span>Examen global</span></div>
+      <div class="pd p3" style="flex:30"><b>30 %</b><span>Trabajo y proyecto</span></div>
+    </div>
+  </section>
+  <section class="tsec">
+    <h3><span class="num">✓</span> Qué deberías saber hacer en este tema</h3>
+    <p class="small">Marca cada punto cuando lo domines. Se guarda solo en este navegador.</p>
+    <ul class="check" id="checklist">
+      <li><label><input type="checkbox" data-k="c1"><span>Explicar las <b>propiedades</b> de los materiales (mecánicas, térmicas, eléctricas, químicas, tecnológicas y ecológicas) y usarlas para <b>elegir un material</b>.</span></label> <a href="#" class="go-tab" data-tab="teoria">Teoría</a></li>
+      <li><label><input type="checkbox" data-k="c2"><span>Describir el <b>ensayo de tracción</b> e interpretar el <b>diagrama σ-ε</b> (puntos P, E, F, R y U).</span></label> <a href="#" class="go-tab" data-tab="teoria">Teoría</a></li>
+      <li><label><input type="checkbox" data-k="c3"><span>Calcular <b>tensiones, alargamientos y el módulo de Young</b> aplicando la ley de Hooke.</span></label> <a href="#" class="go-tab" data-tab="problemas">Problemas</a></li>
+      <li><label><input type="checkbox" data-k="c4"><span>Comprobar si una pieza trabaja en <b>zona elástica</b> y justificarlo.</span></label> <a href="#" class="go-tab" data-tab="problemas">Problemas</a></li>
+      <li><label><input type="checkbox" data-k="c5"><span>Calcular la <b>sección o el diámetro mínimo</b> de una pieza y la <b>fuerza máxima</b> que soporta.</span></label> <a href="#" class="go-tab" data-tab="problemas">Problemas</a></li>
+      <li><label><input type="checkbox" data-k="c6"><span>Trabajar con las <b>unidades</b> (N, kN, kp, mm², cm², MPa, GPa, kp/cm²) sin errores.</span></label> <a href="#" class="go-tab" data-tab="unidades">Unidades</a></li>
+      <li><label><input type="checkbox" data-k="c7"><span>Explicar en qué consisten los ensayos de <b>dureza</b>, <b>resiliencia</b> y <b>fatiga</b>.</span></label> <a href="#" class="go-tab" data-tab="teoria">Teoría</a></li>
+      <li><label><input type="checkbox" data-k="c8"><span>Clasificar los <b>plásticos</b> (termoplásticos, termoestables y elastómeros), conocer sus técnicas de conformado y su reciclado.</span></label> <a href="#" class="go-tab" data-tab="teoria">Teoría</a></li>
+      <li><label><input type="checkbox" data-k="c9"><span>Presentar cada problema con <b>orden</b>: datos, fórmula general, unidades en todos los pasos, resultado destacado y conclusión <b>justificada</b> (criterio 1.5).</span></label> <a href="#" class="go-tab" data-tab="guia">Cómo resolver</a></li>
+    </ul>
+  </section>
+</section>
+
 <section class="panel" id="p-teoria" data-panel="teoria"><h2 class="ph">Teoría: materiales y ensayos</h2>
 <nav class="subnav" aria-label="Apartados de teoría">
-  <a href="#t-prop">Propiedades</a><a href="#t-esf">Esfuerzos</a><a href="#t-tra">Ensayo de tracción</a><a href="#t-dur">Dureza</a><a href="#t-res">Resiliencia</a><a href="#t-fat">Fatiga y END</a><a href="#t-pla">Plásticos</a>
+  <a href="#t-prop">Propiedades</a><a href="#t-esf">Esfuerzos</a><a href="#t-tra">Ensayo de tracción</a><a href="#t-dur">Dureza</a><a href="#t-res">Resiliencia</a><a href="#t-fat">Fatiga</a><a href="#t-pla">Plásticos</a>
 </nav>
-<div class="note-src">Esta teoría resume los contenidos de <b>Tecnología e Ingeniería I</b> sobre materiales. Tu profesor te indicará qué partes entran en el examen.</div>
+<div class="note-src"><b>Importante:</b> esta teoría es un resumen de apoyo. Lo prioritario es lo que se ha explicado y trabajado en clase.</div>
 
 <section class="tsec" id="t-prop">
 <h3><span class="num">1</span> Propiedades de los materiales</h3>
@@ -394,14 +494,14 @@ html.printing .enun{padding:8px 10px}
     <li><b>Fatiga:</b> rotura por cargas repetidas, aunque sean menores que su resistencia.</li></ul></div>
   <div class="prop c-ter"><h4>Térmicas</h4><p>Cómo responde ante el calor.</p><ul>
     <li><b>Conductividad térmica:</b> facilidad para transmitir el calor (metales sí; corcho, madera y plásticos no).</li>
-    <li><b>Dilatación:</b> aumento de tamaño al calentarse. <span class="f">Δl = α · l₀ · ΔT</span></li>
+    <li><b>Dilatación:</b> aumento de tamaño al calentarse.</li>
     <li><b>Temperatura de fusión</b> y <b>calor específico</b>.</li></ul></div>
   <div class="prop c-ele"><h4>Eléctricas y magnéticas</h4><ul>
     <li><b>Conductores</b> (cobre, aluminio), <b>semiconductores</b> (silicio) y <b>aislantes</b> (plásticos, cerámica).</li>
-    <li><b>Resistividad ρ:</b> <span class="f">R = ρ · l / S</span></li>
+    <li><b>Resistividad:</b> oposición que presenta el material al paso de la corriente eléctrica.</li>
     <li><b>Magnéticas:</b> ferromagnéticos (hierro, níquel, cobalto) son atraídos con fuerza por un imán.</li></ul></div>
   <div class="prop c-fis"><h4>Físicas y ópticas</h4><ul>
-    <li><b>Densidad:</b> <span class="f">ρ = m / V</span> (kg/m³)</li>
+    <li><b>Densidad:</b> masa por unidad de volumen (kg/m³).</li>
     <li><b>Ópticas:</b> opacos, translúcidos y transparentes.</li></ul></div>
   <div class="prop c-qui"><h4>Químicas</h4><ul>
     <li><b>Oxidación:</b> reacción con el oxígeno del aire.</li>
@@ -431,10 +531,7 @@ html.printing .enun{padding:8px 10px}
 <section class="tsec" id="t-tra">
 <h3><span class="num">3</span> Ensayos de materiales y ensayo de tracción</h3>
 <p>Los <b>ensayos</b> son pruebas normalizadas que miden las propiedades de un material. Se clasifican en:</p>
-<div class="two">
-  <div class="box"><b>Según el daño</b><ul><li><b>Destructivos:</b> la probeta se rompe o queda inutilizada (tracción, dureza, Charpy, fatiga).</li><li><b>No destructivos (END):</b> la pieza puede seguir usándose (ultrasonidos, rayos X…).</li></ul></div>
-  <div class="box"><b>Según la carga</b><ul><li><b>Estáticos:</b> la carga crece lentamente (tracción, dureza).</li><li><b>Dinámicos:</b> la carga es un golpe o se repite (Charpy, fatiga).</li></ul></div>
-</div>
+<div class="box"><b>Según cómo se aplica la carga</b><ul><li><b>Estáticos:</b> la carga crece lentamente (tracción, dureza).</li><li><b>Dinámicos:</b> la carga es un golpe o se repite (Charpy, fatiga).</li></ul><p class="small">Los ensayos de este tema son <b>destructivos</b>: la probeta se rompe o queda marcada y ya no se puede usar.</p></div>
 <h4>El ensayo de tracción</h4>
 <p>Se estira una <b>probeta normalizada</b> con una fuerza que aumenta poco a poco hasta romperla, midiendo en cada momento la fuerza y el alargamiento.</p>
 
@@ -478,11 +575,11 @@ html.printing .enun{padding:8px 10px}
   <path d="M270,116 C330,72 390,62 440,62" class="curve c4"/>
   <path d="M440,62 C490,64 528,84 556,112" class="curve c5"/>
   <line x1="556" y1="112" x2="556" y2="124" stroke="var(--ink)" stroke-width="3"/>
-  <g class="pt" data-k="P" tabindex="0"><circle cx="178" cy="150" r="8"/><text x="186" y="168">P</text></g>
-  <g class="pt" data-k="E" tabindex="0"><circle cx="210" cy="122" r="8"/><text x="196" y="108">E</text></g>
-  <g class="pt" data-k="F" tabindex="0"><circle cx="252" cy="118" r="8"/><text x="246" y="102">F</text></g>
-  <g class="pt" data-k="R" tabindex="0"><circle cx="440" cy="62" r="8"/><text x="434" y="88">R</text></g>
-  <g class="pt" data-k="U" tabindex="0"><circle cx="556" cy="112" r="8"/><text x="564" y="106">U</text></g>
+  <g class="pt" data-k="P" tabindex="0"><circle class="hit" cx="178" cy="150" r="20"/><circle cx="178" cy="150" r="8"/><text x="186" y="168">P</text></g>
+  <g class="pt" data-k="E" tabindex="0"><circle class="hit" cx="210" cy="122" r="20"/><circle cx="210" cy="122" r="8"/><text x="196" y="108">E</text></g>
+  <g class="pt" data-k="F" tabindex="0"><circle class="hit" cx="252" cy="118" r="20"/><circle cx="252" cy="118" r="8"/><text x="246" y="102">F</text></g>
+  <g class="pt" data-k="R" tabindex="0"><circle class="hit" cx="440" cy="62" r="20"/><circle cx="440" cy="62" r="8"/><text x="434" y="88">R</text></g>
+  <g class="pt" data-k="U" tabindex="0"><circle class="hit" cx="556" cy="112" r="20"/><circle cx="556" cy="112" r="8"/><text x="564" y="106">U</text></g>
   <text x="86" y="250" class="hooke" transform="rotate(-57 86 250)">σ = E · ε</text>
 </svg>
 <div class="se-info" id="seInfo" aria-live="polite"><b>Pulsa un punto del diagrama</b> (P, E, F, R o U) para ver qué significa.</div>
@@ -504,13 +601,13 @@ html.printing .enun{padding:8px 10px}
 <figure class="card-mini"><svg viewBox="0 0 160 120" class="fig-svg"><rect x="10" y="60" width="140" height="50" fill="var(--bar)" stroke="var(--ink)"/><polygon points="62,20 98,20 80,78" fill="#fff" stroke="var(--ink)" stroke-width="2"/><line x1="120" y1="60" x2="120" y2="78" stroke="var(--acc)" stroke-width="3"/><line x1="80" y1="78" x2="124" y2="78" stroke="var(--acc)" stroke-dasharray="3 2"/><text x="126" y="74" class="lbl">e</text></svg><figcaption><b>Rockwell</b> · cono de diamante o bola; se mide la profundidad e</figcaption></figure>
 </div>
 <div class="tablewrap"><table class="tt">
-<thead><tr><th>Ensayo</th><th>Penetrador</th><th>Qué se mide</th><th>Fórmula</th></tr></thead>
+<thead><tr><th>Ensayo</th><th>Penetrador</th><th>Qué se mide</th><th>Para qué se usa</th></tr></thead>
 <tbody>
-<tr><td><b>Brinell (HB)</b></td><td>Bola de acero templado o de metal duro, de diámetro D</td><td>Diámetro d de la huella</td><td class="f">HB = F / S<sub>huella</sub> = 2F / (π · D · (D − √(D² − d²)))<br><small>F en kp, D y d en mm. Se elige F = K · D², con K = 30 para aceros.</small></td></tr>
-<tr><td><b>Vickers (HV)</b></td><td>Pirámide de diamante de base cuadrada (136°)</td><td>Diagonal media d de la huella</td><td class="f">HV = 1,854 · F / d²<br><small>F en kp, d en mm. Sirve para materiales muy duros y piezas finas.</small></td></tr>
-<tr><td><b>Rockwell (HRC / HRB)</b></td><td>Cono de diamante (HRC) o bola de acero (HRB)</td><td>Profundidad e de la huella</td><td class="f">HRC = 100 − e / 0,002<br>HRB = 130 − e / 0,002<br><small>e en mm. Es rápido y la lectura es directa.</small></td></tr>
+<tr><td><b>Brinell (HB)</b></td><td>Bola de acero templado o de metal duro, de diámetro D</td><td>Diámetro d de la huella</td><td>Materiales blandos o de dureza media (aceros sin templar, cobre, aluminio)</td></tr>
+<tr><td><b>Vickers (HV)</b></td><td>Pirámide de diamante de base cuadrada (136°)</td><td>Diagonales de la huella</td><td>Materiales muy duros y piezas finas</td></tr>
+<tr><td><b>Rockwell (HRC / HRB)</b></td><td>Cono de diamante (HRC) o bola de acero (HRB)</td><td>Profundidad de la huella</td><td>Control rápido en taller: la lectura es directa</td></tr>
 </tbody></table></div>
-<p class="small">Ejemplo de notación: <b>250 HB 10/3000</b> significa dureza Brinell de 250 con bola de 10 mm y carga de 3.000 kp. La <b>escala de Mohs</b> (del 1, talco, al 10, diamante) mide la dureza al <b>rayado</b>.</p>
+<p class="small">La <b>escala de Mohs</b> (del 1, talco, al 10, diamante) mide la dureza al <b>rayado</b>.</p>
 </section>
 
 <section class="tsec" id="t-res">
@@ -530,27 +627,14 @@ html.printing .enun{padding:8px 10px}
   <text x="64" y="132" class="lbl">posición inicial</text><text x="226" y="160" class="lbl">tras romper</text>
   <text x="200" y="222" class="lbl">probeta entallada</text>
 </svg></div>
-  <div class="formulas col">
-    <div class="fbox"><span class="fl">Energía absorbida</span><span class="fx">E<sub>p</sub> = m · g · (h − h')</span><small>J</small></div>
-    <div class="fbox"><span class="fl">Resiliencia</span><span class="fx">ρ = E<sub>p</sub> / S</span><small>J/cm² o J/mm² (S: sección en la entalla)</small></div>
-    <div class="fbox"><span class="fl">Alturas con el ángulo</span><span class="fx">h = L · (1 − cos α)</span><small>L: longitud del brazo; α medido desde la vertical</small></div>
-  </div>
+  <div class="box"><b>¿Qué se mide?</b><ul><li>El péndulo sube <b>menos</b> después de romper la probeta (h' &lt; h).</li><li>Esa diferencia de altura indica la <b>energía que ha absorbido</b> la probeta al romperse.</li><li>La <b>resiliencia</b> es esa energía referida a la sección de la probeta en la entalla.</li></ul></div>
 </div>
 <p>Un material <b>tenaz</b> absorbe mucha energía (resiliencia alta); uno <b>frágil</b>, muy poca.</p>
 </section>
 
 <section class="tsec" id="t-fat">
-<h3><span class="num">6</span> Ensayo de fatiga y ensayos no destructivos</h3>
-<div class="two">
-  <div class="box"><b>Fatiga</b><p>Se somete la probeta a <b>cargas que se repiten</b> millones de veces (por ejemplo, flexión rotativa). Las piezas pueden romperse con tensiones menores que su resistencia a tracción: le ocurre a ejes, muelles o alas de avión.</p><p>Con los resultados se dibuja la <b>curva de Wöhler</b> (tensión frente a número de ciclos). El <b>límite de fatiga</b> es la tensión por debajo de la cual la pieza no rompe, por muchos ciclos que soporte.</p></div>
-  <div class="box"><b>Ensayos no destructivos (END)</b><ul>
-    <li><b>Visual:</b> con lupas o cámaras.</li>
-    <li><b>Líquidos penetrantes:</b> un líquido coloreado entra en las grietas superficiales.</li>
-    <li><b>Partículas magnéticas:</b> se usan en materiales ferromagnéticos.</li>
-    <li><b>Ultrasonidos:</b> el eco revela defectos internos.</li>
-    <li><b>Rayos X o gamma:</b> radiografía del interior (por ejemplo, de soldaduras).</li>
-    <li><b>Corrientes inducidas (de Foucault):</b> en materiales conductores.</li></ul></div>
-</div>
+<h3><span class="num">6</span> Ensayo de fatiga</h3>
+<div class="box"><p>Se somete la probeta a <b>cargas que se repiten</b> millones de veces (por ejemplo, flexión rotativa). Las piezas pueden romperse con tensiones menores que su resistencia a tracción: le ocurre a ejes, muelles o alas de avión.</p><p>Con los resultados se dibuja la <b>curva de Wöhler</b> (tensión frente a número de ciclos). El <b>límite de fatiga</b> es la tensión por debajo de la cual la pieza no rompe, por muchos ciclos que soporte.</p></div>
 </section>
 
 <section class="tsec" id="t-pla">
@@ -649,7 +733,7 @@ html.printing .enun{padding:8px 10px}
 <h3><span class="num">4</span> Tipos de problema y cómo atacarlos</h3>
 <p class="small">Pulsa en un ejemplo para ir directamente al problema resuelto.</p>
 <div class="patterns">
-<div class="pat"><b>¿Recupera su longitud?</b><p>Calcula σ = F / S y compárala con σ<sub>E</sub>.</p><div class="exs"><a href="#s1-1" class="go" data-go="s1-1">Serie 1 · 1</a><a href="#s2-4" class="go" data-go="s2-4">Serie 2 · 4</a><a href="#s3-4" class="go" data-go="s3-4">Banco · 4</a><a href="#s4-1" class="go" data-go="s4-1">Repaso · 1</a></div></div><div class="pat"><b>Diámetro o sección mínima</b><p>Haz σ = σ<sub>E</sub>: S = F / σ<sub>E</sub> y luego d = √(4S/π).</p><div class="exs"><a href="#s1-1" class="go" data-go="s1-1">Serie 1 · 1</a><a href="#s2-6" class="go" data-go="s2-6">Serie 2 · 6</a><a href="#s3-10" class="go" data-go="s3-10">Banco · 10</a><a href="#s4-1" class="go" data-go="s4-1">Repaso · 1</a></div></div><div class="pat"><b>Datos de un ensayo: E y ε</b><p>ε = Δl / l₀ (o (l<sub>f</sub> − l₀) / l₀) y E = σ / ε.</p><div class="exs"><a href="#s2-1" class="go" data-go="s2-1">Serie 2 · 1</a><a href="#s3-1" class="go" data-go="s3-1">Banco · 1</a><a href="#s3-16" class="go" data-go="s3-16">Banco · 16</a><a href="#s4-6" class="go" data-go="s4-6">Repaso · 6</a></div></div><div class="pat"><b>Alargamiento limitado</b><p>ε = Δl / l₀ → σ = E · ε → S = F / σ → d.</p><div class="exs"><a href="#s2-3" class="go" data-go="s2-3">Serie 2 · 3</a><a href="#s3-12" class="go" data-go="s3-12">Banco · 12</a><a href="#s4-4" class="go" data-go="s4-4">Repaso · 4</a></div></div><div class="pat"><b>Interpretar la gráfica σ-ε</b><p>Lee los valores de P, E y R. E es la pendiente del tramo recto.</p><div class="exs"><a href="#s2-5" class="go" data-go="s2-5">Serie 2 · 5</a><a href="#s3-17" class="go" data-go="s3-17">Banco · 17</a></div></div><div class="pat"><b>Dos barras con el mismo alargamiento</b><p>Iguala Δl de las dos barras: S₁ · E₁ = S₂ · E₂ (si F y l₀ son iguales).</p><div class="exs"><a href="#s2-7" class="go" data-go="s2-7">Serie 2 · 7</a><a href="#s3-18" class="go" data-go="s3-18">Banco · 18</a></div></div><div class="pat"><b>Barras unidas o pieza escalonada</b><p>La fuerza es la misma en todos los tramos. Δl total = suma de los Δl de cada tramo. Manda el tramo más débil.</p><div class="exs"><a href="#s3-19" class="go" data-go="s3-19">Banco · 19</a><a href="#s3-20" class="go" data-go="s3-20">Banco · 20</a></div></div><div class="pat"><b>Unidades técnicas (kp/cm²)</b><p>Trabaja todo en kp y cm. Al final: 1 kp/cm² ≈ 0,1 MPa.</p><div class="exs"><a href="#s2-2" class="go" data-go="s2-2">Serie 2 · 2</a><a href="#s3-2" class="go" data-go="s3-2">Banco · 2</a><a href="#s3-6" class="go" data-go="s3-6">Banco · 6</a><a href="#s4-9" class="go" data-go="s4-9">Repaso · 9</a></div></div><div class="pat"><b>Comparar barras o materiales</b><p>Misma F y S → misma σ. El alargamiento depende de E; la seguridad, de σ<sub>E</sub>.</p><div class="exs"><a href="#s1-5" class="go" data-go="s1-5">Serie 1 · 5</a><a href="#s3-8" class="go" data-go="s3-8">Banco · 8</a><a href="#s3-9" class="go" data-go="s3-9">Banco · 9</a><a href="#s4-5" class="go" data-go="s4-5">Repaso · 5</a><a href="#s4-10" class="go" data-go="s4-10">Repaso · 10</a></div></div><div class="pat"><b>Tensor de rosca</b><p>Δl = paso × número de vueltas. Después aplica Hooke.</p><div class="exs"><a href="#s3-13" class="go" data-go="s3-13">Banco · 13</a></div></div>
+<div class="pat"><b>¿Recupera su longitud?</b><p>Calcula σ = F / S y compárala con σ<sub>E</sub>.</p><div class="exs"><a href="#s1-1" class="go" data-go="s1-1">Serie 1 · 1</a><a href="#s2-4" class="go" data-go="s2-4">Serie 2 · 4</a><a href="#s3-4" class="go" data-go="s3-4">Banco · 4</a><a href="#s4-1" class="go" data-go="s4-1">Repaso · 1</a></div></div><div class="pat"><b>Diámetro o sección mínima</b><p>Haz σ = σ<sub>E</sub>: S = F / σ<sub>E</sub> y luego d = √(4S/π).</p><div class="exs"><a href="#s1-1" class="go" data-go="s1-1">Serie 1 · 1</a><a href="#s2-6" class="go" data-go="s2-6">Serie 2 · 6</a><a href="#s3-10" class="go" data-go="s3-10">Banco · 10</a><a href="#s4-1" class="go" data-go="s4-1">Repaso · 1</a></div></div><div class="pat"><b>Datos de un ensayo: E y ε</b><p>ε = Δl / l₀ (o (l<sub>f</sub> − l₀) / l₀) y E = σ / ε.</p><div class="exs"><a href="#s2-1" class="go" data-go="s2-1">Serie 2 · 1</a><a href="#s3-1" class="go" data-go="s3-1">Banco · 1</a><a href="#s3-16" class="go" data-go="s3-16">Banco · 16</a><a href="#s4-6" class="go" data-go="s4-6">Repaso · 6</a></div></div><div class="pat"><b>Alargamiento limitado</b><p>ε = Δl / l₀ → σ = E · ε → S = F / σ → d.</p><div class="exs"><a href="#s2-3" class="go" data-go="s2-3">Serie 2 · 3</a><a href="#s3-12" class="go" data-go="s3-12">Banco · 12</a><a href="#s4-4" class="go" data-go="s4-4">Repaso · 4</a></div></div><div class="pat"><b>Interpretar la gráfica σ-ε</b><p>Lee los valores de P, E y R. E es la pendiente del tramo recto.</p><div class="exs"><a href="#s2-5" class="go" data-go="s2-5">Serie 2 · 5</a><a href="#s3-17" class="go" data-go="s3-17">Banco · 17</a></div></div><div class="pat"><b>Dos barras con el mismo alargamiento</b><p>Iguala Δl de las dos barras: S₁ · E₁ = S₂ · E₂ (si F y l₀ son iguales).</p><div class="exs"><a href="#s2-7" class="go" data-go="s2-7">Serie 2 · 7</a><a href="#s3-18" class="go" data-go="s3-18">Banco · 18</a></div></div><div class="pat"><b>Barras unidas o pieza escalonada</b><p>La fuerza es la misma en todos los tramos. Δl total = suma de los Δl de cada tramo. Manda el tramo más débil.</p><div class="exs"><a href="#s3-19" class="go" data-go="s3-19">Banco · 19</a><a href="#s3-20" class="go" data-go="s3-20">Banco · 20</a></div></div><div class="pat"><b>Unidades técnicas (kp/cm²)</b><p>Trabaja todo en kp y cm. Al final: 1 kp/cm² ≈ 0,1 MPa.</p><div class="exs"><a href="#s2-2" class="go" data-go="s2-2">Serie 2 · 2</a><a href="#s3-2" class="go" data-go="s3-2">Banco · 2</a><a href="#s3-6" class="go" data-go="s3-6">Banco · 6</a><a href="#s4-9" class="go" data-go="s4-9">Repaso · 9</a></div></div><div class="pat"><b>Comparar barras o materiales</b><p>Misma F y S → misma σ. El alargamiento depende de E; que recupere su forma depende de σ<sub>E</sub>.</p><div class="exs"><a href="#s1-5" class="go" data-go="s1-5">Serie 1 · 5</a><a href="#s3-8" class="go" data-go="s3-8">Banco · 8</a><a href="#s3-9" class="go" data-go="s3-9">Banco · 9</a><a href="#s4-5" class="go" data-go="s4-5">Repaso · 5</a><a href="#s4-10" class="go" data-go="s4-10">Repaso · 10</a></div></div><div class="pat"><b>Tensor de rosca</b><p>Δl = paso × número de vueltas. Después aplica Hooke.</p><div class="exs"><a href="#s3-13" class="go" data-go="s3-13">Banco · 13</a></div></div>
 </div>
 </section>
 
@@ -774,12 +858,12 @@ html.printing .enun{padding:8px 10px}
 </article>
 <article class="card" id="s1-4" data-serie="s1">
   <header class="card-h"><span class="pnum">4</span><div><h4>Ensayo de tracción de una probeta</h4><span class="ptag">Serie 1</span></div></header>
-  <div class="enun"><p>Una probeta circular de aluminio tiene 20 mm de diámetro. Durante un ensayo de tracción se observa que el comportamiento es elástico hasta 12 kN y que la rotura se produce a 18 kN. El módulo de Young del material es 70 GPa.</p><ul class="qs"><li><span class="ql">a</span><span>Calcula la tensión correspondiente al final de la zona elástica.</span></li><li><span class="ql">b</span><span>Calcula la tensión de rotura.</span></li><li><span class="ql">c</span><span>Determina la deformación unitaria en el límite elástico.</span></li><li><span class="ql">d</span><span>Calcula la tensión máxima de trabajo si se aplica un coeficiente de seguridad n = 2,5 sobre la tensión de rotura.</span></li></ul></div>
+  <div class="enun"><p>Una probeta circular de aluminio tiene 20 mm de diámetro. Durante un ensayo de tracción se observa que el comportamiento es elástico hasta 12 kN y que la rotura se produce a 18 kN. El módulo de Young del material es 70 GPa.</p><ul class="qs"><li><span class="ql">a</span><span>Calcula la tensión correspondiente al final de la zona elástica.</span></li><li><span class="ql">b</span><span>Calcula la tensión de rotura.</span></li><li><span class="ql">c</span><span>Determina la deformación unitaria en el límite elástico.</span></li><li><span class="ql">d</span><span>Calcula el diámetro mínimo de una barra de este aluminio que deba soportar 30 kN sin sufrir deformación permanente.</span></li></ul></div>
   <div class="tools">
-    <details class="hint"><summary>Pista</summary><div>Divide cada fuerza característica entre la sección de la probeta. Lee bien sobre qué tensión se aplica el coeficiente n.</div></details>
-    <details class="quick"><summary>Ver solo resultados</summary><div class="qres"><span><b>a)</b> S = 314,16 mm²; σ<sub>E</sub> = 38,20 MPa</span><span><b>b)</b> σ<sub>R</sub> = 57,30 MPa</span><span><b>c)</b> ε = 5,46·10⁻⁴ (0,0546 %)</span><span><b>d)</b> σ<sub>trabajo</sub> = 22,92 MPa</span></div></details>
+    <details class="hint"><summary>Pista</summary><div>Divide cada fuerza característica entre la sección de la probeta. Para el diámetro mínimo, usa el límite elástico que has calculado en a).</div></details>
+    <details class="quick"><summary>Ver solo resultados</summary><div class="qres"><span><b>a)</b> S = 314,16 mm²; σ<sub>E</sub> = 38,20 MPa</span><span><b>b)</b> σ<sub>R</sub> = 57,30 MPa</span><span><b>c)</b> ε = 5,46·10⁻⁴ (0,0546 %)</span><span><b>d)</b> S = 785,40 mm²; d<sub>mín</sub> = 31,62 mm</span></div></details>
   </div>
-  <details class="sol"><summary>Ver solución paso a paso</summary><div class="sol-b"><div class="callout idea"><b>Idea clave:</b> divide cada fuerza característica entre la sección de la probeta. Lee bien sobre qué tensión se aplica el coeficiente n.</div><div class="datos"><div class="lab">Datos</div><div class="tablewrap"><table class="tt dat"><thead><tr><th>Magnitud</th><th>Símbolo</th><th>Valor</th></tr></thead><tbody><tr><td>Diámetro</td><td>d</td><td>20 mm</td></tr><tr><td>Fuerza en el límite elástico</td><td>F<sub>E</sub></td><td>12 kN = 12.000 N</td></tr><tr><td>Fuerza de rotura</td><td>F<sub>R</sub></td><td>18 kN = 18.000 N</td></tr><tr><td>Módulo de Young</td><td>E</td><td>70 GPa = 70.000 MPa</td></tr><tr><td>Coeficiente de seguridad</td><td>n</td><td>2,5</td></tr></tbody></table></div></div><p>Sección de la probeta (la usaremos en todos los apartados):</p><div class="eq">S = π · d² / 4 = π · (20 mm)² / 4 = 100π = 314,16 mm²</div><div class="step"><div class="step-h"><span class="badge">a</span><span>Tensión al final de la zona elástica</span></div><div class="eq">σ<sub>E</sub> = F<sub>E</sub> / S = 12.000 N / 314,16 mm²</div><div class="res">σ<sub>E</sub> = 38,20 MPa</div></div><div class="step"><div class="step-h"><span class="badge">b</span><span>Tensión de rotura</span></div><div class="eq">σ<sub>R</sub> = F<sub>R</sub> / S = 18.000 N / 314,16 mm²</div><div class="res">σ<sub>R</sub> = 57,30 MPa</div></div><div class="step"><div class="step-h"><span class="badge">c</span><span>Deformación unitaria en el límite elástico</span></div><p>Hasta el límite elástico se cumple la ley de Hooke:</p><div class="eq">ε = σ<sub>E</sub> / E = 38,20 MPa / 70.000 MPa</div><div class="res">ε = 5,46·10⁻⁴  (0,0546 %)</div></div><div class="step"><div class="step-h"><span class="badge">d</span><span>Tensión máxima de trabajo (n = 2,5 sobre la rotura)</span></div><div class="eq">σ<sub>trabajo</sub> = σ<sub>R</sub> / n = 57,30 MPa / 2,5</div><div class="res">σ<sub>trabajo</sub> = 22,92 MPa</div><div class="callout ojo"><b>¡Ojo!</b> Aquí el coeficiente se aplica sobre la tensión de rotura, no sobre el límite elástico. Lee siempre bien sobre qué valor te piden aplicar n. Fíjate en que 22,92 MPa &lt; 38,20 MPa: la pieza trabajaría en zona elástica.</div></div></div></details>
+  <details class="sol"><summary>Ver solución paso a paso</summary><div class="sol-b"><div class="callout idea"><b>Idea clave:</b> divide cada fuerza característica entre la sección de la probeta. Para el diámetro mínimo, usa el límite elástico que has calculado en a).</div><div class="datos"><div class="lab">Datos</div><div class="tablewrap"><table class="tt dat"><thead><tr><th>Magnitud</th><th>Símbolo</th><th>Valor</th></tr></thead><tbody><tr><td>Diámetro</td><td>d</td><td>20 mm</td></tr><tr><td>Fuerza en el límite elástico</td><td>F<sub>E</sub></td><td>12 kN = 12.000 N</td></tr><tr><td>Fuerza de rotura</td><td>F<sub>R</sub></td><td>18 kN = 18.000 N</td></tr><tr><td>Módulo de Young</td><td>E</td><td>70 GPa = 70.000 MPa</td></tr><tr><td>Carga del apartado d)</td><td>F<sub>d</sub></td><td>30 kN = 30.000 N</td></tr></tbody></table></div></div><p>Sección de la probeta (la usaremos en todos los apartados):</p><div class="eq">S = π · d² / 4 = π · (20 mm)² / 4 = 100π = 314,16 mm²</div><div class="step"><div class="step-h"><span class="badge">a</span><span>Tensión al final de la zona elástica</span></div><div class="eq">σ<sub>E</sub> = F<sub>E</sub> / S = 12.000 N / 314,16 mm²</div><div class="res">σ<sub>E</sub> = 38,20 MPa</div></div><div class="step"><div class="step-h"><span class="badge">b</span><span>Tensión de rotura</span></div><div class="eq">σ<sub>R</sub> = F<sub>R</sub> / S = 18.000 N / 314,16 mm²</div><div class="res">σ<sub>R</sub> = 57,30 MPa</div></div><div class="step"><div class="step-h"><span class="badge">c</span><span>Deformación unitaria en el límite elástico</span></div><p>Hasta el límite elástico se cumple la ley de Hooke:</p><div class="eq">ε = σ<sub>E</sub> / E = 38,20 MPa / 70.000 MPa</div><div class="res">ε = 5,46·10⁻⁴  (0,0546 %)</div></div><div class="step"><div class="step-h"><span class="badge">d</span><span>Diámetro mínimo para 30 kN sin deformación permanente</span></div><p>Sin deformación permanente significa no superar el límite elástico calculado en a): σ = σ<sub>E</sub> = 38,20 MPa.</p><div class="eq">S = F<sub>d</sub> / σ<sub>E</sub> = 30.000 N / 38,20 N/mm² = 785,40 mm²</div><div class="eq">d = √(4 · S / π) = √(4 · 785,40 / π) = √1.000</div><div class="res">d<sub>mín</sub> = 31,62 mm</div><div class="callout ojo"><b>¡Ojo!</b> Usa σ<sub>E</sub> sin redondear (38,197… MPa); si no, el resultado varía en las centésimas. Tiene sentido que salga mayor que 20 mm: la carga es 2,5 veces la del límite elástico de la probeta.</div></div></div></details>
 </article>
 <article class="card" id="s1-5" data-serie="s1">
   <header class="card-h"><span class="pnum">5</span><div><h4>Razonamiento técnico</h4><span class="ptag">Serie 1</span></div></header>
@@ -1137,7 +1221,7 @@ html.printing .enun{padding:8px 10px}
 
 <section class="panel" id="p-soluciones" data-panel="soluciones"><h2 class="ph">Solucionario: resultados finales</h2><p class="small">Pulsa el número de un problema para ir a su resolución.</p><section class="tsec sum"><h3>Serie 1</h3><p class="small">Problemas de clase · tracción básica</p>
 <div class="tablewrap"><table class="tt sumt"><thead><tr><th>Problema</th><th>Apartado</th><th>Solución</th></tr></thead><tbody>
-<tr class=""><td><a href="#s1-1" class="go" data-go="s1-1">1</a></td><td>a</td><td>S = 13,85 mm²; σ = 158,8 MPa</td></tr><tr class=""><td><a href="#s1-1" class="go" data-go="s1-1">1</a></td><td>b</td><td>158,8 &lt; 280 MPa → zona elástica, recupera su longitud</td></tr><tr class=""><td><a href="#s1-1" class="go" data-go="s1-1">1</a></td><td>c</td><td>S = 178,57 mm²; d = 15,08 mm</td></tr><tr class="sep"><td><a href="#s1-2" class="go" data-go="s1-2">2</a></td><td>a</td><td>σ = 200 MPa</td></tr><tr class=""><td><a href="#s1-2" class="go" data-go="s1-2">2</a></td><td>b</td><td>ε = 0,001 (0,1 %)</td></tr><tr class=""><td><a href="#s1-2" class="go" data-go="s1-2">2</a></td><td>c</td><td>σ<sub>adm</sub> = 112 MPa; F<sub>máx</sub> = 1.344 N</td></tr><tr class=""><td><a href="#s1-2" class="go" data-go="s1-2">2</a></td><td>d</td><td>S = 187,5 mm²; d = 15,45 mm</td></tr><tr class="sep"><td><a href="#s1-3" class="go" data-go="s1-3">3</a></td><td>a</td><td>S = 160 mm²; σ = 150 MPa</td></tr><tr class=""><td><a href="#s1-3" class="go" data-go="s1-3">3</a></td><td>b</td><td>150 &lt; 180 MPa → zona elástica, recupera su forma</td></tr><tr class=""><td><a href="#s1-3" class="go" data-go="s1-3">3</a></td><td>c</td><td>S = 200 mm²; e = 10 mm</td></tr><tr class="sep"><td><a href="#s1-4" class="go" data-go="s1-4">4</a></td><td>a</td><td>S = 314,16 mm²; σ<sub>E</sub> = 38,20 MPa</td></tr><tr class=""><td><a href="#s1-4" class="go" data-go="s1-4">4</a></td><td>b</td><td>σ<sub>R</sub> = 57,30 MPa</td></tr><tr class=""><td><a href="#s1-4" class="go" data-go="s1-4">4</a></td><td>c</td><td>ε = 5,46·10⁻⁴ (0,0546 %)</td></tr><tr class=""><td><a href="#s1-4" class="go" data-go="s1-4">4</a></td><td>d</td><td>σ<sub>trabajo</sub> = 22,92 MPa</td></tr><tr class="sep"><td><a href="#s1-5" class="go" data-go="s1-5">5</a></td><td>a</td><td>La barra A (menor sección → mayor tensión)</td></tr><tr class=""><td><a href="#s1-5" class="go" data-go="s1-5">5</a></td><td>b</td><td>σ<sub>A</sub> = 200 MPa; σ<sub>B</sub> = 100 MPa</td></tr><tr class=""><td><a href="#s1-5" class="go" data-go="s1-5">5</a></td><td>c</td><td>B elástica (100 &lt; 150); A plástica (200 &gt; 150)</td></tr>
+<tr class=""><td><a href="#s1-1" class="go" data-go="s1-1">1</a></td><td>a</td><td>S = 13,85 mm²; σ = 158,8 MPa</td></tr><tr class=""><td><a href="#s1-1" class="go" data-go="s1-1">1</a></td><td>b</td><td>158,8 &lt; 280 MPa → zona elástica, recupera su longitud</td></tr><tr class=""><td><a href="#s1-1" class="go" data-go="s1-1">1</a></td><td>c</td><td>S = 178,57 mm²; d = 15,08 mm</td></tr><tr class="sep"><td><a href="#s1-2" class="go" data-go="s1-2">2</a></td><td>a</td><td>σ = 200 MPa</td></tr><tr class=""><td><a href="#s1-2" class="go" data-go="s1-2">2</a></td><td>b</td><td>ε = 0,001 (0,1 %)</td></tr><tr class=""><td><a href="#s1-2" class="go" data-go="s1-2">2</a></td><td>c</td><td>σ<sub>adm</sub> = 112 MPa; F<sub>máx</sub> = 1.344 N</td></tr><tr class=""><td><a href="#s1-2" class="go" data-go="s1-2">2</a></td><td>d</td><td>S = 187,5 mm²; d = 15,45 mm</td></tr><tr class="sep"><td><a href="#s1-3" class="go" data-go="s1-3">3</a></td><td>a</td><td>S = 160 mm²; σ = 150 MPa</td></tr><tr class=""><td><a href="#s1-3" class="go" data-go="s1-3">3</a></td><td>b</td><td>150 &lt; 180 MPa → zona elástica, recupera su forma</td></tr><tr class=""><td><a href="#s1-3" class="go" data-go="s1-3">3</a></td><td>c</td><td>S = 200 mm²; e = 10 mm</td></tr><tr class="sep"><td><a href="#s1-4" class="go" data-go="s1-4">4</a></td><td>a</td><td>S = 314,16 mm²; σ<sub>E</sub> = 38,20 MPa</td></tr><tr class=""><td><a href="#s1-4" class="go" data-go="s1-4">4</a></td><td>b</td><td>σ<sub>R</sub> = 57,30 MPa</td></tr><tr class=""><td><a href="#s1-4" class="go" data-go="s1-4">4</a></td><td>c</td><td>ε = 5,46·10⁻⁴ (0,0546 %)</td></tr><tr class=""><td><a href="#s1-4" class="go" data-go="s1-4">4</a></td><td>d</td><td>S = 785,40 mm²; d<sub>mín</sub> = 31,62 mm</td></tr><tr class="sep"><td><a href="#s1-5" class="go" data-go="s1-5">5</a></td><td>a</td><td>La barra A (menor sección → mayor tensión)</td></tr><tr class=""><td><a href="#s1-5" class="go" data-go="s1-5">5</a></td><td>b</td><td>σ<sub>A</sub> = 200 MPa; σ<sub>B</sub> = 100 MPa</td></tr><tr class=""><td><a href="#s1-5" class="go" data-go="s1-5">5</a></td><td>c</td><td>B elástica (100 &lt; 150); A plástica (200 &gt; 150)</td></tr>
 </tbody></table></div></section>
 <section class="tsec sum"><h3>Serie 2</h3><p class="small">Problemas de clase · unidades, gráficas y dos materiales</p>
 <div class="tablewrap"><table class="tt sumt"><thead><tr><th>Problema</th><th>Apartado</th><th>Solución</th></tr></thead><tbody>
@@ -1152,7 +1236,7 @@ html.printing .enun{padding:8px 10px}
 <tr class=""><td><a href="#s4-1" class="go" data-go="s4-1">1</a></td><td>a</td><td>σ = 152,79 MPa</td></tr><tr class=""><td><a href="#s4-1" class="go" data-go="s4-1">1</a></td><td>b</td><td>Zona elástica → recupera</td></tr><tr class=""><td><a href="#s4-1" class="go" data-go="s4-1">1</a></td><td>c</td><td>d<sub>mín</sub> = 17,24 mm</td></tr><tr class="sep"><td><a href="#s4-2" class="go" data-go="s4-2">2</a></td><td>a</td><td>σ = 200 MPa</td></tr><tr class=""><td><a href="#s4-2" class="go" data-go="s4-2">2</a></td><td>b</td><td>ε = 9,52·10⁻⁴</td></tr><tr class=""><td><a href="#s4-2" class="go" data-go="s4-2">2</a></td><td>c</td><td>Δl ≈ 0,57 mm</td></tr><tr class=""><td><a href="#s4-2" class="go" data-go="s4-2">2</a></td><td>d</td><td>F<sub>máx</sub> = 31,5 kN</td></tr><tr class="sep"><td><a href="#s4-3" class="go" data-go="s4-3">3</a></td><td>a</td><td>σ = 70,74 MPa → elástica</td></tr><tr class=""><td><a href="#s4-3" class="go" data-go="s4-3">3</a></td><td>b</td><td>ε = 1,011·10⁻³; Δl = 0,808 mm</td></tr><tr class=""><td><a href="#s4-3" class="go" data-go="s4-3">3</a></td><td>c</td><td>F<sub>máx</sub> ≈ 8,48 kN</td></tr><tr class="sep"><td><a href="#s4-4" class="go" data-go="s4-4">4</a></td><td>a</td><td>S<sub>mín</sub> = 250 mm²</td></tr><tr class=""><td><a href="#s4-4" class="go" data-go="s4-4">4</a></td><td>b</td><td>d<sub>mín</sub> = 17,84 mm</td></tr><tr class=""><td><a href="#s4-4" class="go" data-go="s4-4">4</a></td><td>c</td><td>σ = 100 MPa → elástica</td></tr><tr class="sep"><td><a href="#s4-5" class="go" data-go="s4-5">5</a></td><td>a</td><td>σ<sub>A</sub> = σ<sub>B</sub> = 120 MPa</td></tr><tr class=""><td><a href="#s4-5" class="go" data-go="s4-5">5</a></td><td>b</td><td>Δl<sub>A</sub> ≈ 0,86 mm; Δl<sub>B</sub> ≈ 0,29 mm</td></tr><tr class=""><td><a href="#s4-5" class="go" data-go="s4-5">5</a></td><td>c</td><td>A se alarga más; ambas elásticas</td></tr><tr class="sep"><td><a href="#s4-6" class="go" data-go="s4-6">6</a></td><td>a</td><td>σ<sub>E</sub> = 109,42 MPa</td></tr><tr class=""><td><a href="#s4-6" class="go" data-go="s4-6">6</a></td><td>b</td><td>σ<sub>R</sub> = 169,10 MPa</td></tr><tr class=""><td><a href="#s4-6" class="go" data-go="s4-6">6</a></td><td>c</td><td>ε = 9,95·10⁻⁴</td></tr><tr class=""><td><a href="#s4-6" class="go" data-go="s4-6">6</a></td><td>d</td><td>F<sub>máx</sub> = 10.942 N</td></tr><tr class="sep"><td><a href="#s4-7" class="go" data-go="s4-7">7</a></td><td>a</td><td>σ₁ = 150 MPa</td></tr><tr class=""><td><a href="#s4-7" class="go" data-go="s4-7">7</a></td><td>b</td><td>ε = 1,5·10⁻³; Δl = 0,75 mm</td></tr><tr class=""><td><a href="#s4-7" class="go" data-go="s4-7">7</a></td><td>c</td><td>Recupera</td></tr><tr class=""><td><a href="#s4-7" class="go" data-go="s4-7">7</a></td><td>d</td><td>σ₂ = 240 MPa &gt; σ<sub>E</sub> → permanente</td></tr><tr class="sep"><td><a href="#s4-8" class="go" data-go="s4-8">8</a></td><td>a</td><td>σ = 126 MPa</td></tr><tr class=""><td><a href="#s4-8" class="go" data-go="s4-8">8</a></td><td>b</td><td>F ≈ 9,90 kN</td></tr><tr class=""><td><a href="#s4-8" class="go" data-go="s4-8">8</a></td><td>c</td><td>Elástica</td></tr><tr class="sep"><td><a href="#s4-9" class="go" data-go="s4-9">9</a></td><td>a</td><td>σ = 1.299,2 kp/cm²</td></tr><tr class=""><td><a href="#s4-9" class="go" data-go="s4-9">9</a></td><td>b</td><td>Zona elástica</td></tr><tr class=""><td><a href="#s4-9" class="go" data-go="s4-9">9</a></td><td>c</td><td>ε = 6,187·10⁻⁴; Δl = 0,495 mm</td></tr><tr class=""><td><a href="#s4-9" class="go" data-go="s4-9">9</a></td><td>d</td><td>F<sub>máx</sub> = 7.697 kp</td></tr><tr class="sep"><td><a href="#s4-10" class="go" data-go="s4-10">10</a></td><td>a</td><td>Barra A</td></tr><tr class=""><td><a href="#s4-10" class="go" data-go="s4-10">10</a></td><td>b</td><td>σ<sub>A</sub> = 198,94 MPa; σ<sub>B</sub> = 88,42 MPa</td></tr><tr class=""><td><a href="#s4-10" class="go" data-go="s4-10">10</a></td><td>c</td><td>Ninguna lo supera</td></tr><tr class=""><td><a href="#s4-10" class="go" data-go="s4-10">10</a></td><td>d</td><td>F = 11,06 kN; σ<sub>B</sub> = 97,78 MPa</td></tr>
 </tbody></table></div></section></section>
 </main>
-<footer class="foot">Tecnología e Ingeniería I · Ensayo de tracción y materiales · IES Murcia</footer>
+<footer class="foot">Tecnología e Ingeniería I · Ensayo de tracción y materiales</footer>
 </div>
 <script>(function () {
   'use strict';
@@ -1246,6 +1330,14 @@ html.printing .enun{padding:8px 10px}
     [val, unit, kp].forEach(function (el) { el.addEventListener('input', conv); el.addEventListener('change', conv); });
     fillUnits(); conv();
   }
+
+
+  /* ---------- lista de autoevaluación (solo en este navegador) ---------- */
+  $$('#checklist input[type=checkbox]').forEach(function (cb) {
+    var key = 'tei-traccion-' + cb.dataset.k;
+    try { cb.checked = localStorage.getItem(key) === '1'; } catch (e) {}
+    cb.addEventListener('change', function () { try { localStorage.setItem(key, cb.checked ? '1' : '0'); } catch (e) {} });
+  });
 
   /* ---------- PDF ---------- */
   var sel = $('#pdfMode'), msg = $('#pdfMsg');
