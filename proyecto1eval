@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Proyecto: ciclo de vida de un producto · TeI I</title>
+<style>:root{
+  --pri:#1d4e89; --pri-d:#163a66; --pri-l:#e8f0fa;
+  --acc:#e07a1f; --acc-l:#fdeedd;
+  --ok:#1f7a4d; --ok-l:#e3f4ea;
+  --warn:#b4231b; --warn-l:#fde8e6;
+  --idea:#7a5a00; --idea-l:#fff6d6;
+  --ink:#1c2430; --mut:#5b6675; --line:#d7dee8; --bg:#f4f7fb; --card:#fff; --bar:#cfd9e6;
+  --r:14px; --sh:0 1px 2px rgba(20,40,70,.06),0 4px 14px rgba(20,40,70,.07);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;font-size:16px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.app{max-width:1100px;margin:0 auto;padding:0 16px 40px}
+h1,h2,h3,h4{line-height:1.25;margin:0}
+p{margin:.5em 0}
+.small{font-size:.9rem;color:var(--mut)}
+sub{font-size:.72em}
+a{color:var(--pri)}
+
+/* cabecera */
+.top{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;background:linear-gradient(120deg,var(--pri) 0%,#2b6cb0 60%,#3d84c6 100%);color:#fff;border-radius:0 0 var(--r) var(--r);padding:18px 20px;margin:0 -16px;box-shadow:var(--sh)}
+.brand{display:flex;gap:14px;align-items:center}
+.logo{width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.16);display:grid;place-items:center;flex:none}
+.logo svg{width:34px;height:34px}
+.top h1{font-size:1.35rem;font-weight:750;letter-spacing:-.01em}
+.top p{margin:2px 0 0;opacity:.88;font-size:.92rem}
+.pdfbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pdfbar select{font:inherit;font-size:.9rem;padding:9px 10px;border-radius:10px;border:0;background:rgba(255,255,255,.95);color:var(--ink);max-width:100%}
+.btn-pdf{display:inline-flex;gap:8px;align-items:center;font:inherit;font-weight:700;padding:9px 16px;border-radius:10px;border:0;background:var(--acc);color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.btn-pdf svg{width:18px;height:18px}
+.btn-pdf:hover{background:#c96811}
+.pdfmsg{margin:12px 0 0;padding:12px 14px;border-radius:10px;background:var(--idea-l);border:1px solid #efd88a;font-size:.93rem}
+
+/* pestañas */
+.tabs{position:sticky;top:0;z-index:20;display:flex;gap:4px;overflow-x:auto;background:var(--bg);padding:12px 0 10px;margin-bottom:6px;scrollbar-width:thin}
+.tabs button{flex:none;font:inherit;font-weight:650;font-size:.95rem;padding:9px 15px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--pri);border-color:var(--pri);color:#fff}
+.tabs button:hover:not([aria-selected="true"]){border-color:var(--pri);color:var(--pri)}
+.panel{display:none}
+.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.ph{font-size:1.5rem;margin:10px 0 14px;color:var(--pri-d)}
+.print-cover{display:none}
+
+/* inicio */
+.hero{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;align-items:center;background:#fff;border-radius:var(--r);padding:22px;box-shadow:var(--sh);margin-top:6px}
+.hero h2{font-size:1.45rem;color:var(--pri-d)}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.hero-stats div{background:var(--pri-l);border-radius:12px;padding:12px 6px;text-align:center}
+.hero-stats b{display:block;font-size:1.7rem;color:var(--pri)}
+.hero-stats span{font-size:.8rem;color:var(--mut)}
+.h-route{margin:24px 0 10px;color:var(--pri-d)}
+.route{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.rt{display:flex;flex-direction:column;gap:2px;background:#fff;border-radius:12px;padding:14px;box-shadow:var(--sh);text-decoration:none;color:var(--ink);cursor:pointer;border-top:4px solid var(--pri);transition:transform .15s}
+.rt:hover{transform:translateY(-2px)}
+.rt span{width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.9rem;margin-bottom:6px}
+.rt small{color:var(--mut);font-size:.82rem}
+.howto{margin-top:22px;background:#fff;border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+.howto h3{color:var(--pri-d);margin-bottom:10px}
+.how{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.how div{background:var(--bg);border-radius:10px;padding:12px}
+.how p{font-size:.9rem;margin:.3em 0 0;color:var(--mut)}
+
+/* bloques de teoría */
+.subnav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.subnav a{font-size:.86rem;padding:6px 11px;border-radius:999px;background:var(--pri-l);color:var(--pri-d);text-decoration:none;font-weight:600}
+.subnav a:hover{background:var(--pri);color:#fff}
+.note-src{font-size:.9rem;background:#fff;border-left:4px solid var(--acc);padding:10px 14px;border-radius:8px;margin-bottom:14px;box-shadow:var(--sh)}
+.tsec{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);margin-bottom:16px;scroll-margin-top:64px}
+.tsec h3{display:flex;align-items:center;gap:10px;font-size:1.22rem;color:var(--pri-d);margin-bottom:10px}
+.tsec h4{margin:18px 0 8px;color:var(--pri);font-size:1.05rem}
+.num{width:30px;height:30px;border-radius:9px;background:var(--pri);color:#fff;display:grid;place-items:center;font-size:.95rem;flex:none}
+.props{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.prop{border-radius:12px;padding:14px;border:1px solid var(--line);border-top:5px solid var(--c)}
+.prop h4{margin:0 0 4px;color:var(--c)}
+.prop>p{margin:0 0 6px;font-size:.88rem;color:var(--mut)}
+.prop ul{margin:0;padding-left:18px;font-size:.93rem}
+.prop li{margin:3px 0}
+.c-mec{--c:#1d4e89}.c-ter{--c:#c2410c}.c-ele{--c:#6d28d9}.c-fis{--c:#0f766e}.c-qui{--c:#b4231b}.c-tec{--c:#475569}.c-eco{--c:#1f7a4d}
+.f{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:1.02em;white-space:nowrap}
+td.f{white-space:normal}
+.esf{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.esf-i{border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.esf-i.hl{border:2px solid var(--acc);background:var(--acc-l)}
+.esf-i span{font-size:.84rem;color:var(--mut)}
+.mini{width:100%;max-width:150px;height:auto;margin:0 auto}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0}
+.box{background:var(--bg);border-radius:12px;padding:14px;border:1px solid var(--line)}
+.box ul{margin:.4em 0 0;padding-left:18px}
+.box.good{background:var(--ok-l);border-color:#b7dfc7}
+.box.bad{background:var(--warn-l);border-color:#f3c3be}
+.fig-svg{width:100%;height:auto;display:block;margin:8px auto}
+.fig-svg.narrow{max-width:380px}
+.fig-svg.probeta{max-width:620px}
+.card-mini .fig-svg{max-width:210px}
+.lbl{font-size:12px;fill:var(--ink)}
+.formulas{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+.formulas.col{grid-template-columns:1fr}
+.fbox{background:var(--pri-l);border-radius:12px;padding:12px;text-align:center;display:flex;flex-direction:column}
+.fl{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--pri);font-weight:700}
+.fx{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:1.3rem;font-weight:600;margin:4px 0}
+.fbox small{color:var(--mut)}
+
+/* diagrama σ-ε */
+.se-wrap{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;align-items:center}
+.se{width:100%;height:auto}
+.zone{opacity:.5}.z1{fill:#dbe8f7}.z2{fill:#fde7cf}.z3{fill:#dff1e6}.z4{fill:#fbe0dc}
+.zt{font-size:13px;font-weight:700;fill:var(--pri-d);text-anchor:middle}
+.axl{font-size:16px;font-style:italic;fill:var(--ink)}
+.curve{fill:none;stroke-width:4;stroke-linecap:round}
+.c1{stroke:#1d4e89}.c2{stroke:#3d84c6}.c3{stroke:#e07a1f}.c4{stroke:#1f7a4d}.c5{stroke:#b4231b}
+.hooke{font-size:13px;fill:#1d4e89;font-weight:700}
+.pt{cursor:pointer;outline:none}
+.zone,.curve,.zt,.hooke,.axl{pointer-events:none}
+.pt circle.hit{fill:transparent!important;stroke:none!important}
+.pt:focus-visible circle:not(.hit){stroke-width:4}
+.pt circle{fill:#fff;stroke:var(--ink);stroke-width:2.5;transition:r .15s}
+.pt text{font-weight:800;font-size:16px;fill:var(--ink)}
+.pt:hover circle,.pt:focus circle,.pt.on circle{fill:var(--acc);stroke:var(--acc)}
+.se-info{background:var(--acc-l);border-radius:12px;padding:14px;border:1px solid #f4c99d;min-height:120px}
+.se-info b{color:#9a4a07}
+
+/* dureza, plásticos */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card-mini{margin:0;border:1px solid var(--line);border-radius:12px;padding:8px;text-align:center}
+.card-mini figcaption{font-size:.85rem;color:var(--mut)}
+.ptypes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ptype{border-radius:12px;padding:14px;border:1px solid var(--line)}
+.pth{display:flex;flex-direction:column;gap:4px}
+.ptype .pth svg{width:100%;height:46px;background:var(--bg);border-radius:8px}
+.ptype .pth b{font-size:1.08rem}
+.ch{fill:none;stroke:var(--c);stroke-width:3;stroke-linecap:round}
+.termo{--c:#1d4e89}.estable{--c:#b4231b}.elast{--c:#1f7a4d}
+.ptype .pth b{color:var(--c)}
+.ex{font-size:.88rem;background:var(--bg);border-radius:8px;padding:8px;margin:6px 0 0}
+.resinas{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.resina{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px}
+.tri{width:52px;height:48px;flex:none}
+.tri text{font-weight:800;font-size:20px;fill:var(--pri)}
+.resina b{display:block}
+.resina span{display:block;font-size:.85rem}
+.resina small{color:var(--mut);font-size:.8rem}
+
+/* tablas */
+.tablewrap{overflow-x:auto;margin:8px 0;-webkit-overflow-scrolling:touch}
+.tt{border-collapse:collapse;width:100%;font-size:.93rem;background:#fff}
+.tt th{background:var(--pri);color:#fff;text-align:left;padding:8px 10px;font-weight:650}
+.tt td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.tt tbody tr:nth-child(even) td{background:#f8fafd}
+.tt.dat td:nth-child(2),.tt.dat td:nth-child(3),.tt.dat th:nth-child(2),.tt.dat th:nth-child(3){text-align:center}
+.tt.mat th{background:var(--pri-d)}
+.sumt tr.sep td{border-top:2px solid var(--pri)}
+.sumt td:first-child,.sumt td:nth-child(2){text-align:center;font-weight:700;width:80px}
+
+/* guía */
+.steps8{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.steps8 li{counter-increment:s;position:relative;background:var(--bg);border-radius:12px;padding:12px 12px 12px 54px;border:1px solid var(--line)}
+.steps8 li::before{content:counter(s);position:absolute;left:12px;top:12px;width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;font-weight:800;display:grid;place-items:center}
+.pick td:first-child{font-weight:650}
+.despejes{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.dj{border:1px solid var(--line);border-radius:12px;overflow:hidden;text-align:center;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:1.05rem}
+.dj div{padding:6px}
+.dj-h{background:var(--pri);color:#fff;font-weight:700}
+.dj div+div{border-top:1px solid var(--line)}
+.patterns{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.pat{border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;padding:12px}
+.pat p{font-size:.92rem;margin:.3em 0 .5em}
+.exs{display:flex;flex-wrap:wrap;gap:6px}
+.exs a{font-size:.8rem;padding:4px 9px;border-radius:999px;background:var(--pri-l);color:var(--pri-d);text-decoration:none;font-weight:650}
+.exs a:hover{background:var(--pri);color:#fff}
+.errs{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.err{background:var(--warn-l);border-radius:12px;padding:12px;border:1px solid #f3c3be}
+.err b{color:var(--warn)}
+.err p{font-size:.9rem;margin:.3em 0 0}
+.tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.tip{background:var(--ok-l);border-radius:12px;padding:12px;border:1px solid #b7dfc7;font-size:.93rem}
+
+/* unidades */
+.conv{background:var(--pri-l);border-radius:12px;padding:14px}
+.conv-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.conv label{display:flex;flex-direction:column;font-size:.82rem;font-weight:650;color:var(--pri-d);gap:3px}
+.conv label.chk{flex-direction:row;align-items:center;gap:6px;font-weight:500}
+.conv input[type=number],.conv select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:9px;min-width:130px;background:#fff}
+.conv-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin-top:12px}
+.conv-out div{background:#fff;border-radius:10px;padding:10px;border:1px solid var(--line)}
+.conv-out b{display:block;font-size:1.1rem;color:var(--pri);word-break:break-all}
+.conv-out span{font-size:.82rem;color:var(--mut)}
+.eqv{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.eq-card{border:1px solid var(--line);border-radius:12px;padding:12px;border-top:4px solid var(--acc)}
+.eq-card h4{margin:0 0 6px}
+.eq-card ul{margin:0;padding-left:18px;font-size:.93rem}
+
+/* problemas */
+.pbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:.88rem;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:600}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.pbar-r{display:flex;gap:6px}
+.btn-s{font:inherit;font-size:.86rem;padding:7px 12px;border-radius:9px;border:1px solid var(--pri);background:#fff;color:var(--pri);cursor:pointer;font-weight:650}
+.btn-s:hover{background:var(--pri);color:#fff}
+.serie{margin-bottom:24px}
+.serie-h{background:var(--pri-d);color:#fff;border-radius:var(--r);padding:14px 18px;margin-bottom:12px}
+.serie-h h3{font-size:1.25rem}
+.serie-h p{margin:2px 0 0;opacity:.85;font-size:.92rem}
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:18px;margin-bottom:14px;scroll-margin-top:64px;border-left:5px solid var(--pri)}
+.card.flash{animation:flash 1.4s ease}
+@keyframes flash{0%,40%{box-shadow:0 0 0 4px var(--acc)}100%{box-shadow:var(--sh)}}
+.card-h{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.pnum{width:38px;height:38px;border-radius:11px;background:var(--pri);color:#fff;font-weight:800;display:grid;place-items:center;flex:none;font-size:1.05rem}
+.card-h h4{font-size:1.08rem}
+.ptag{font-size:.76rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;font-weight:650}
+.enun{background:var(--bg);border-radius:12px;padding:12px 14px;border:1px solid var(--line)}
+.enun>p{margin:0 0 6px}
+.qs{list-style:none;padding:0;margin:6px 0 0}
+.qs li{display:flex;gap:8px;margin:5px 0}
+.ql{flex:none;width:24px;height:24px;border-radius:7px;background:var(--acc);color:#fff;font-weight:800;font-size:.85rem;display:grid;place-items:center;margin-top:1px}
+.pfig{margin:10px 0 0;text-align:center}
+.pfig img{max-width:100%;max-height:380px;width:auto;height:auto;border-radius:8px;border:1px solid var(--line);background:#fff}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+details>summary{cursor:pointer;list-style:none;user-select:none}
+details>summary::-webkit-details-marker{display:none}
+.hint,.quick{flex:1 1 260px}
+.hint>summary,.quick>summary{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:.9rem;padding:7px 12px;border-radius:9px}
+.hint>summary{background:var(--idea-l);color:var(--idea);border:1px solid #efd88a}
+.hint>summary::before{content:"?";width:18px;height:18px;border-radius:50%;background:var(--idea);color:#fff;display:grid;place-items:center;font-size:.75rem}
+.quick>summary{background:var(--ok-l);color:var(--ok);border:1px solid #b7dfc7}
+.quick>summary::before{content:"✓";font-weight:900}
+.hint>div{margin-top:6px;background:var(--idea-l);padding:10px 12px;border-radius:10px;font-size:.93rem}
+.qres{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
+.qres span{background:var(--ok-l);border:1px solid #b7dfc7;border-radius:9px;padding:5px 10px;font-size:.9rem}
+.sol{margin-top:10px}
+.sol>summary{display:flex;justify-content:center;align-items:center;gap:8px;font-weight:750;padding:10px;border-radius:11px;background:var(--pri);color:#fff}
+.sol>summary::after{content:"▾";transition:transform .2s}
+.sol[open]>summary::after{transform:rotate(180deg)}
+.sol[open]>summary{background:var(--pri-d)}
+.sol-b{padding:12px 2px 0}
+.datos .lab{font-weight:800;color:var(--pri-d);margin:4px 0 2px}
+.callout{border-radius:10px;padding:10px 12px;margin:10px 0;font-size:.94rem;border-left:5px solid}
+.callout.idea{background:var(--idea-l);border-color:#d4a800}
+.callout.idea b{color:var(--idea)}
+.callout.ojo{background:var(--warn-l);border-color:var(--warn)}
+.callout.ojo b{color:var(--warn)}
+.step{border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0;background:#fff}
+.step-h{display:flex;gap:10px;align-items:center;font-weight:750;color:var(--pri-d);margin-bottom:6px;padding-bottom:6px;border-bottom:1px dashed var(--line)}
+.badge{min-width:28px;height:28px;padding:0 6px;border-radius:8px;background:var(--acc);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+.eq{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:1.08rem;text-align:center;padding:5px 8px;margin:4px 0;overflow-x:auto}
+.res{text-align:center;font-weight:800;font-size:1.08rem;color:var(--ok);background:var(--ok-l);border:2px solid var(--ok);border-radius:10px;padding:8px 12px;margin:8px auto;max-width:560px}
+.step p,.sol-b>p{font-size:.95rem}
+.pl{padding-left:20px;font-size:.95rem}
+.pl li{margin:5px 0}
+.foot{text-align:center;color:var(--mut);font-size:.85rem;margin-top:24px}
+
+/* móvil */
+@media (max-width:820px){
+  .hero,.two,.se-wrap{grid-template-columns:1fr}
+  .route{grid-template-columns:repeat(2,1fr)}
+  .how,.steps8{grid-template-columns:1fr}
+  .ptypes,.grid3{grid-template-columns:1fr}
+  .top h1{font-size:1.15rem}
+}
+@media (max-width:480px){
+  body{font-size:15px}
+  .route{grid-template-columns:1fr}
+  .tsec,.card{padding:14px}
+  .eq{font-size:1rem}
+  .pdfbar,.pdfbar select,.btn-pdf{width:100%}
+  .btn-pdf{justify-content:center}
+}
+
+
+.prio{background:#fff8e6;border:1px solid #f0d58a;border-left:5px solid var(--acc);border-radius:12px;padding:12px 14px;margin:14px 0;font-size:.95rem}
+.prio a{font-weight:700;white-space:nowrap}
+.ce-txt{font-style:italic;color:var(--mut)}
+.crit{display:flex;gap:14px;align-items:flex-start;background:var(--pri-l);border-radius:12px;padding:14px;margin:12px 0;border:1px solid #c9daf0}
+.crit-n{flex:none;width:58px;height:58px;border-radius:14px;background:var(--pri);color:#fff;font-weight:800;font-size:1.3rem;display:grid;place-items:center}
+.crit p{margin:.3em 0 0}
+.tsec h3 .num{min-width:30px;width:auto;padding:0 6px}
+.check{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.check li{display:flex;gap:10px;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.check label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;flex:1;min-width:0}
+.check label span{min-width:0;overflow-wrap:anywhere}
+.check li{min-width:0}
+.check input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--ok)}
+.check li:has(input:checked){background:var(--ok-l);border-color:#b7dfc7}
+.check a{flex:none;font-size:.8rem;padding:4px 9px;border-radius:999px;background:var(--pri-l);color:var(--pri-d);text-decoration:none;font-weight:650}
+html.printing .prio{display:none}
+html.printing .check a{display:none}
+html.printing[data-print="enun"] .panel[data-panel="evaluacion"],html.printing[data-print="sol"] .panel[data-panel="evaluacion"]{display:none!important}
+@media (max-width:480px){.check li{flex-direction:column;align-items:flex-start}.crit{flex-direction:column}}
+
+
+.pond{display:flex;gap:6px;margin:6px 0 4px;min-height:86px}
+.pd{border-radius:12px;color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px 6px;min-width:0}
+.pd b{font-size:1.6rem;line-height:1.1}
+.pd span{font-size:.9rem;font-weight:600}
+.p1{background:var(--pri)}.p2{background:var(--pri-d)}.p3{background:var(--acc)}
+@media (max-width:480px){.pd b{font-size:1.25rem}.pd span{font-size:.78rem}}
+
+
+.crit-n{display:flex;flex-direction:column;justify-content:center;align-items:center;line-height:1.05;width:64px;height:64px}
+.crit-n small{font-size:.72rem;font-weight:700;opacity:.9;margin-top:3px}
+.crit.c15{background:var(--acc-l);border-color:#f4c99d}
+.crit.c15 .crit-n{background:var(--acc)}
+.crit-det{margin-top:12px}
+.box.b15{background:var(--acc-l);border-color:#f4c99d}
+.crit-det li{margin:3px 0}
+
+/* ---------- impresión / PDF ---------- */
+@page{size:A4;margin:14mm 12mm}
+html.printing body{background:#fff;font-size:12.5px}
+html.printing .app{max-width:none;padding:0}
+html.printing .top,html.printing .tabs,html.printing .pdfmsg,html.printing .pbar,html.printing .tools,html.printing .subnav,html.printing .hero,html.printing .route,html.printing .howto,html.printing .h-route,html.printing .conv,html.printing .foot,html.printing .se-info,html.printing .note-src{display:none!important}
+html.printing .panel{display:block!important;animation:none}
+html.printing .print-cover{display:block;text-align:center;padding:26px 0 18px;border-bottom:3px solid var(--pri);margin-bottom:12px}
+html.printing .print-cover h1{font-size:28px;color:var(--pri-d);margin-top:40mm}
+html.printing .print-cover p{font-size:15px;color:var(--mut)}
+html.printing .print-cover ol{text-align:left;display:inline-block;font-size:15px;margin-top:20mm;line-height:2}
+html.printing .panel[data-panel="inicio"]{page-break-after:auto}
+html.printing .ph{page-break-before:always;margin-top:0}
+html.printing .tsec,html.printing .card{box-shadow:none;border:1px solid var(--line)}
+html.printing .tsec{page-break-inside:auto}
+html.printing .prop,html.printing .esf-i,html.printing .box,html.printing .fbox,html.printing .err,html.printing .tip,html.printing .pat,html.printing .dj,html.printing .resina,html.printing .ptype,html.printing .step,html.printing .eq,html.printing .res,html.printing .callout,html.printing .datos,html.printing .enun,html.printing figure,html.printing tr,html.printing .steps8 li,html.printing .eq-card{page-break-inside:avoid;break-inside:avoid}
+html.printing h3,html.printing h4,html.printing .step-h,html.printing .card-h{page-break-after:avoid;break-after:avoid}
+html.printing .serie-h{page-break-after:avoid;break-after:avoid;background:#fff;color:var(--pri-d);border:2px solid var(--pri)}
+html.printing .sol>summary{display:none}
+html.printing .sol{display:block}
+html.printing .card{page-break-inside:auto}
+html.printing[data-print="all"] .card,html.printing[data-print="sol"] .card{page-break-before:always;break-before:page}
+html.printing[data-print="all"] .serie-h+.card,html.printing[data-print="sol"] .serie-h+.card{page-break-before:avoid;break-before:avoid}
+html.printing .serie{page-break-before:always}
+html.printing .serie:first-of-type{page-break-before:avoid}
+html.printing[data-print="enun"] .sol,html.printing[data-print="enun"] .panel:not([data-panel="problemas"]),html.printing[data-print="sol"] .panel:not([data-panel="problemas"]):not([data-panel="soluciones"]),html.printing[data-print="teoria"] .panel[data-panel="problemas"],html.printing[data-print="teoria"] .panel[data-panel="soluciones"]{display:none!important}
+html.printing[data-print="enun"] .panel[data-panel="problemas"] .ph,html.printing[data-print="sol"] .panel[data-panel="problemas"] .ph{page-break-before:avoid}
+html.printing[data-print="enun"] .card{page-break-inside:avoid;break-inside:avoid}
+html.printing[data-print="enun"] .ph::after{content:" · enunciados"}
+html.printing[data-print="enun"] .panel[data-panel="problemas"]::before,html.printing[data-print="sol"] .panel[data-panel="problemas"]::before{content:"Ensayo de tracción y materiales · Tecnología e Ingeniería I";display:block;text-align:center;font-weight:700;color:var(--pri-d);border-bottom:3px solid var(--pri);padding:8px 0 10px;margin-bottom:10px}
+html.printing .card[hidden]{display:block!important}
+html.printing .tablewrap{overflow:visible}
+html.printing .eq{overflow:visible;white-space:normal}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .top,.tabs,.pbar,.tools,.subnav,.foot,.pdfmsg{display:none!important}
+  .panel{display:block!important}
+}
+html.pdfgen #content{width:820px;margin:0 auto}
+html.printing .two{grid-template-columns:1fr 1fr}
+html.printing .ptypes,html.printing .grid3{grid-template-columns:repeat(3,1fr)}
+html.printing .steps8{grid-template-columns:1fr 1fr}
+html.printing .se-wrap{grid-template-columns:1fr}
+html.printing .se{max-width:520px;margin:0 auto}
+html.printing .card-mini .fig-svg{max-width:130px}
+html.printing .fig-svg.probeta{max-width:440px}
+html.printing .fig-svg.narrow{max-width:280px}
+html.printing .props{grid-template-columns:repeat(3,1fr)}
+html.printing .tsec{padding:12px;margin-bottom:10px}
+html.printing .pfig img{max-height:300px}
+html.printing .card{padding:12px;margin-bottom:8px}
+html.printing .step{padding:8px 10px;margin:6px 0}
+html.printing .eq{padding:1px 6px;margin:1px 0;font-size:13px}
+html.printing .res{padding:4px 10px;margin:5px auto;font-size:13px}
+html.printing .tt{font-size:11.5px}
+html.printing .tt td,html.printing .tt th{padding:4px 8px}
+html.printing .callout{padding:6px 10px;margin:6px 0}
+html.printing .enun{padding:8px 10px}
+
+/* proyecto de investigación */
+.steps{margin:0;padding-left:22px}.steps li{margin:6px 0}
+.chips span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:.9rem}
+.cal{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.blq{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;scroll-margin-top:80px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.blq-h{display:flex;gap:10px;align-items:flex-start}
+.blq-h b{display:block;color:var(--pri-d)}
+.blq-h small{color:var(--mut)}
+.blq-n{flex:none;width:34px;height:34px;border-radius:10px;background:var(--acc);color:#fff;font-weight:800;display:grid;place-items:center}
+.blq.ex{background:var(--warn-l);border-color:#f2c1bc}.blq.ex .blq-n{background:var(--warn)}
+.blq.expo{background:var(--ok-l);border-color:#b7dfc7}.blq.expo .blq-n{background:var(--ok)}
+.blq-e{margin:0;font-size:.9rem;color:var(--ink);background:var(--bg);border-radius:9px;padding:7px 10px}
+.blq.hl{outline:3px solid var(--acc);outline-offset:2px}
+.check li{padding:8px 10px}
+.kw{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:.9rem}
+.kw span{background:var(--pri-l);color:var(--pri-d);border-radius:999px;padding:3px 10px;font-weight:600}
+.fase h3 .num{min-width:30px}
+.cyc{max-width:520px}
+.cy-n{font:800 15px system-ui,sans-serif;fill:var(--acc)}
+.cy-t{font:600 10.5px system-ui,sans-serif;fill:var(--ink)}
+.cy-c{font:800 17px system-ui,sans-serif;fill:var(--pri-d)}
+.cy-s{font:600 12px system-ui,sans-serif;fill:var(--mut)}
+.rb{margin-bottom:18px}
+.rb-t th small{display:block;font-weight:500;opacity:.85;font-size:.8rem}
+.rb-t td{min-width:150px;font-size:.88rem}
+.rb-t td:first-child{min-width:120px}
+/* temporizador */
+.timer{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--pri-l);border-radius:14px;padding:16px}
+.tm-d{font:800 3.4rem/1 system-ui,sans-serif;color:var(--pri-d);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.tm-b{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.tm-m{display:flex;gap:6px;align-items:center;font-size:.9rem;font-weight:650;color:var(--pri-d)}
+.tm-m select{font:inherit;padding:6px 8px;border-radius:9px;border:1px solid var(--line);background:#fff}
+.tm-msg{margin:0;min-height:1.4em;font-weight:700;color:var(--pri-d);text-align:center}
+.timer.low .tm-d{color:var(--acc)}
+.timer.done .tm-d{color:var(--warn)}
+.timer.big{position:fixed;inset:0;z-index:900;justify-content:center;border-radius:0;background:var(--pri-l)}
+.timer.big .tm-d{font-size:min(28vw,40vh)}
+html.tm-lock{overflow:hidden}
+@media (max-width:480px){.tm-d{font-size:2.8rem}.cal{grid-template-columns:1fr}}
+/* impresión */
+html.printing .timer,html.printing .tsec:has(.timer){display:none!important}
+html.printing .blq,html.printing .rb tr,html.printing .fase{page-break-inside:avoid;break-inside:avoid}
+html.printing .panel[data-panel="inicio"] .ph{page-break-before:avoid}
+html.printing .go-tab{color:inherit;text-decoration:none}
+
+/* sello de identidad */
+.fe-wrap{margin:14px 0 4px;display:flex;justify-content:center}
+.fe-seal{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:.82rem;color:var(--mut);background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 14px 5px 11px;cursor:pointer;letter-spacing:.01em;transition:color .2s,border-color .2s,background .2s;max-width:100%}
+.fe-seal span{font-style:italic;text-align:left}
+.fe-cross{width:10px;height:14px;flex:none;fill:var(--pri)}
+.fe-seal:hover{color:var(--pri-d);border-color:var(--pri);background:var(--pri-l)}
+.fe-seal:focus-visible,.fe-x:focus-visible,.fe-dlg .btn-pdf:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+html.fe-lock{overflow:hidden}
+.fe-dlg{border:0;padding:0;border-radius:18px;box-shadow:0 20px 60px rgba(20,40,70,.35);width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 48px);max-height:calc(100dvh - 48px);color:var(--ink);background:var(--card)}
+.fe-dlg::backdrop{background:rgba(22,58,102,.45)}
+.fe-dlg.fe-fallback{position:fixed;inset:0;margin:auto;z-index:1000}
+.fe-box{position:relative;padding:26px 26px 20px;overflow-y:auto;max-height:inherit;box-sizing:border-box;border-top:4px solid var(--pri)}
+.fe-box h2{margin:0 34px 14px 0;font-size:1.2rem;line-height:1.3;color:var(--pri-d)}
+.fe-c{color:var(--pri);margin-right:4px}
+.fe-box p{margin:.55em 0;line-height:1.6}
+.fe-box blockquote{margin:14px 0 0;padding:10px 14px;background:var(--pri-l);border-left:4px solid var(--pri);border-radius:0 10px 10px 0}
+.fe-box blockquote p{margin:0;font-style:italic}
+.fe-box cite{display:block;margin-top:4px;font-style:normal;font-weight:700;font-size:.88rem;color:var(--pri-d)}
+.fe-x{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:1.4rem;line-height:1;cursor:pointer}
+.fe-x:hover{background:var(--pri-l)}
+.fe-act{display:flex;justify-content:flex-end;margin-top:16px}
+@media (max-width:560px){.fe-box{padding:22px 18px 16px}.fe-box h2{font-size:1.08rem}}
+@media print{.fe-wrap,.fe-dlg{display:none!important}}
+html.printing .fe-wrap,html.printing .fe-dlg{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="brand"><div class="logo" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 7a13 13 0 1 1-12.4 9" fill="none" stroke="#fff" stroke-width="3"/><path d="M4 12l3.6 4.6L12.5 13" fill="none" stroke="#ffd29a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="20" cy="20" r="4" fill="#ffd29a"/></svg></div>
+  <div><h1>Proyecto de investigación</h1><p>El ciclo de vida de un producto · Tecnología e Ingeniería I · 1.º de Bachillerato</p></div></div>
+  <div class="pdfbar"><button type="button" class="btn-pdf" id="pdfBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Descargar PDF</button></div>
+</header>
+<p class="pdfmsg" id="pdfMsg" hidden></p>
+<nav class="tabs" role="tablist" aria-label="Apartados del proyecto">
+  <button role="tab" type="button" data-tab="inicio" id="t-inicio" aria-controls="p-inicio" aria-selected="true" tabindex="0">El proyecto</button>
+  <button role="tab" type="button" data-tab="calendario" id="t-calendario" aria-controls="p-calendario" aria-selected="false" tabindex="-1">Calendario</button>
+  <button role="tab" type="button" data-tab="fases" id="t-fases" aria-controls="p-fases" aria-selected="false" tabindex="-1">Guía de investigación</button>
+  <button role="tab" type="button" data-tab="expo" id="t-expo" aria-controls="p-expo" aria-selected="false" tabindex="-1">Presentación y exposición</button>
+  <button role="tab" type="button" data-tab="rubrica" id="t-rubrica" aria-controls="p-rubrica" aria-selected="false" tabindex="-1">Rúbrica</button>
+</nav>
+<div class="print-cover"><h1>Proyecto de investigación</h1><p>El ciclo de vida de un producto · Tecnología e Ingeniería I · 1.º de Bachillerato</p></div>
+<main id="content">
+<section class="panel active" id="p-inicio" data-panel="inicio" role="tabpanel" aria-labelledby="t-inicio"><h2 class="ph">El proyecto</h2>
+<div class="hero"><div>
+  <h2>El ciclo de vida de un producto</h2>
+  <p>Por <b>parejas</b>, vais a investigar la vida completa de un producto real: desde que alguien tiene la idea hasta que se convierte en residuo… y cómo se podría mejorar.</p>
+  <p>Trabajaréis en los <b>últimos 15 minutos</b> de cada clase y lo expondréis al final de la evaluación.</p></div>
+  <div class="hero-stats"><div><b>2</b><span>personas por pareja</span></div><div><b>13</b><span>clases de trabajo</span></div><div><b>6′</b><span>de exposición</span></div></div>
+</div>
+<div class="prio"><b>Importante:</b> lo que se explique en clase sobre el proyecto tiene prioridad sobre esta web.</div>
+
+<section class="tsec">
+  <h3><span class="num">🎯</span> Qué tenéis que hacer</h3>
+  <ol class="steps">
+    <li><b>Elegid un producto</b> real y concreto (mejor un modelo o tipo concreto que algo general). Cada pareja, un producto distinto: el profesor lo aprueba.</li>
+    <li><b>Investigad las 8 fases</b> de su ciclo de vida con la <a href="#fases" class="go-tab" data-tab="fases">guía de investigación</a>.</li>
+    <li><b>Anotad cada clase</b> en vuestro <b>diario de trabajo</b> (un documento compartido): fecha, qué habéis hecho y quién.</li>
+    <li><b>Haced un diagrama</b> del ciclo de vida de vuestro producto.</li>
+    <li><b>Preparad la presentación</b> y <b>exponedla</b> en 6 minutos (más preguntas).</li>
+  </ol>
+</section>
+
+<section class="tsec">
+  <h3><span class="num">🛒</span> Ideas de productos</h3>
+  <p class="small">Podéis proponer otro producto que os interese, siempre que sea un objeto real fabricado.</p>
+  <div class="chips"><span>Bicicleta</span><span>Patinete eléctrico</span><span>Teléfono móvil</span><span>Auriculares inalámbricos</span><span>Zapatillas deportivas</span><span>Pantalón vaquero</span><span>Botella de agua reutilizable</span><span>Lata de refresco</span><span>Mochila escolar</span><span>Silla de oficina</span><span>Lavadora</span><span>Cafetera de cápsulas</span><span>Bombilla LED</span><span>Calculadora científica</span><span>Balón de fútbol</span><span>Raqueta de pádel</span><span>Casco de bicicleta</span><span>Taladro eléctrico</span><span>Videoconsola</span><span>Neumático de coche</span></div>
+</section>
+
+<section class="tsec">
+  <h3><span class="num">📦</span> Qué hay que entregar</h3>
+  <div class="tips">
+    <div class="tip"><b>Presentación</b> (unas 12 diapositivas), con el diagrama del ciclo de vida y las fuentes.</div>
+    <div class="tip"><b>Diario de trabajo</b>: una entrada por clase.</div>
+    <div class="tip"><b>Exposición oral</b> de 6 minutos, los dos por igual, y preguntas del profesor.</div>
+  </div>
+  <p class="small">Fecha de entrega: al terminar la clase 13. Exposiciones: clases 15 y 16.</p>
+</section>
+
+<section class="tsec">
+  <h3><span class="num">CE</span> Cómo se evalúa</h3>
+  <p>El proyecto forma parte del <b>30 % de trabajo y proyecto</b> de la nota de la evaluación. Se evalúa con estos criterios del currículo de Tecnología e Ingeniería I:</p>
+  <div class="pond" role="img" aria-label="Criterio 2.1: 50 %, Criterio 1.1: 25 %, Criterio 1.5: 25 %">
+    <div class="pd p1" style="flex:50"><b>50 %</b><span>Criterio 2.1</span></div><div class="pd p2" style="flex:25"><b>25 %</b><span>Criterio 1.1</span></div><div class="pd p3" style="flex:25"><b>25 %</b><span>Criterio 1.5</span></div>
+  </div>
+  <p><a href="#rubrica" class="go-tab" data-tab="rubrica">Ver la rúbrica completa</a></p>
+</section></section>
+<section class="panel" id="p-calendario" data-panel="calendario" role="tabpanel" aria-labelledby="t-calendario"><h2 class="ph">Calendario</h2>
+<section class="tsec">
+  <h3><span class="num">⏱</span> Temporizador del proyecto</h3>
+  <div class="timer" id="timer">
+    <div class="tm-d" id="tmD" aria-live="off">15:00</div>
+    <div class="tm-b"><button type="button" class="btn-pdf" id="tmGo">Empezar</button><button type="button" class="btn-s" id="tmR">Reiniciar</button>
+    <label class="tm-m">Minutos <select id="tmM"><option>10</option><option selected>15</option><option>20</option><option>30</option></select></label>
+    <button type="button" class="btn-s" id="tmBig" aria-pressed="false">Pantalla grande</button></div>
+    <p class="tm-msg" id="tmMsg" role="status"></p>
+  </div>
+</section>
+<section class="tsec">
+  <h3><span class="num">📅</span> Calendario de las 16 clases</h3>
+  <p class="small">Marcad cada tarea cuando la tengáis hecha. Se guarda solo en este navegador; lo que cuenta es vuestro diario de trabajo.</p>
+  <div class="cal">
+  <div class="blq" id="b1"><div class="blq-h"><span class="blq-n">1</span><div><b>Pareja y producto</b><small>Clase 1 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b1-0"><span>Formad la pareja y abrid un documento compartido: será vuestro diario de trabajo.</span></label></li><li><label><input type="checkbox" data-k="b1-1"><span>Leed entero el proyecto y la rúbrica.</span></label></li><li><label><input type="checkbox" data-k="b1-2"><span>Proponed 3 productos (en orden de preferencia) al profesor.</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Pareja formada y 3 productos propuestos.</p></div>
+  <div class="blq" id="b2"><div class="blq-h"><span class="blq-n">2</span><div><b>Plan y primeras fuentes</b><small>Clase 2 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b2-0"><span>Apuntad el producto aprobado por el profesor.</span></label></li><li><label><input type="checkbox" data-k="b2-1"><span>Repartid las fases entre los dos (los dos debéis conocer todas).</span></label></li><li><label><input type="checkbox" data-k="b2-2"><span>Buscad al menos 3 fuentes fiables y anotadlas con su enlace.</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Reparto de tareas y 3 fuentes anotadas.</p></div>
+  <div class="blq" id="b3"><div class="blq-h"><span class="blq-n">3</span><div><b>Fase 1 · Necesidad e idea</b><small>Clase 3 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b3-0"><span>¿Qué necesidad cubre el producto? ¿Quién lo usa?</span></label></li><li><label><input type="checkbox" data-k="b3-1"><span>¿Cómo surgió? Productos de la competencia.</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Notas de la fase 1 en el diario.</p></div>
+  <div class="blq" id="b4"><div class="blq-h"><span class="blq-n">4</span><div><b>Fase 2 · Diseño y desarrollo</b><small>Clase 4 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b4-0"><span>Bocetos, planos, prototipos y pruebas.</span></label></li><li><label><input type="checkbox" data-k="b4-1"><span>Normas que debe cumplir (UNE, ISO, marcado CE).</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Notas de la fase 2 y una imagen o boceto.</p></div>
+  <div class="blq" id="b5"><div class="blq-h"><span class="blq-n">5</span><div><b>Fase 3 · Materiales</b><small>Clase 5 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b5-0"><span>Materiales de cada pieza importante y por qué se eligen (propiedades).</span></label></li><li><label><input type="checkbox" data-k="b5-1"><span>De dónde salen las materias primas.</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Tabla de piezas y materiales.</p></div>
+  <div class="blq" id="b6"><div class="blq-h"><span class="blq-n">6</span><div><b>Fase 4 · Fabricación y control de calidad</b><small>Clase 6 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b6-0"><span>Procesos de fabricación y montaje.</span></label></li><li><label><input type="checkbox" data-k="b6-1"><span>Cómo se controla la calidad: inspecciones, ensayos, normas.</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Notas de la fase 4.</p></div>
+  <div class="blq" id="b7"><div class="blq-h"><span class="blq-n">7</span><div><b>Fase 5 · Distribución y comercialización</b><small>Clase 7 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b7-0"><span>Embalaje, transporte y logística.</span></label></li><li><label><input type="checkbox" data-k="b7-1"><span>Precio, público objetivo y publicidad.</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Notas de la fase 5.</p></div>
+  <div class="blq" id="b8"><div class="blq-h"><span class="blq-n">8</span><div><b>Fase 6 · Uso y mantenimiento</b><small>Clase 8 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b8-0"><span>Vida útil, mantenimiento y reparaciones.</span></label></li><li><label><input type="checkbox" data-k="b8-1"><span>Consumo de energía y obsolescencia (programada o percibida).</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Notas de la fase 6.</p></div>
+  <div class="blq" id="b9"><div class="blq-h"><span class="blq-n">9</span><div><b>Fase 7 · Fin de vida</b><small>Clase 9 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b9-0"><span>Qué pasa cuando se tira: reutilizar, reparar, reciclar.</span></label></li><li><label><input type="checkbox" data-k="b9-1"><span>Economía circular y dónde se recoge el residuo.</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Notas de la fase 7.</p></div>
+  <div class="blq" id="b10"><div class="blq-h"><span class="blq-n">10</span><div><b>Fase 8 · Mejora continua</b><small>Clase 10 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b10-0"><span>Impacto ambiental del producto en todo su ciclo.</span></label></li><li><label><input type="checkbox" data-k="b10-1"><span>Vuestra propuesta de mejora (más sostenible, más duradero, más fácil de reparar…).</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Propuesta de mejora razonada.</p></div>
+  <div class="blq" id="b11"><div class="blq-h"><span class="blq-n">11</span><div><b>Diagrama del ciclo de vida</b><small>Clase 11 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b11-0"><span>Haced un diagrama circular con las 8 fases de vuestro producto.</span></label></li><li><label><input type="checkbox" data-k="b11-1"><span>Revisad que todas las fuentes estén anotadas.</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Diagrama terminado.</p></div>
+  <div class="blq" id="b12"><div class="blq-h"><span class="blq-n">12</span><div><b>Presentación</b><small>Clase 12 · últimos 15 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b12-0"><span>Montad las diapositivas siguiendo la estructura del proyecto.</span></label></li><li><label><input type="checkbox" data-k="b12-1"><span>Poco texto: imágenes, esquemas y palabras clave.</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Presentación casi terminada.</p></div>
+  <div class="blq" id="b13"><div class="blq-h"><span class="blq-n">13</span><div><b>Ensayo y entrega</b><small>Clase 13 · últimos 30 minutos</small></div></div>
+    <ul class="check"><li><label><input type="checkbox" data-k="b13-0"><span>Ensayad la exposición con cronómetro (máximo 6 minutos).</span></label></li><li><label><input type="checkbox" data-k="b13-1"><span>Repasad cómo responder preguntas sobre cualquier fase.</span></label></li><li><label><input type="checkbox" data-k="b13-2"><span>Entregad la presentación y el diario.</span></label></li></ul>
+    <p class="blq-e"><b>Al terminar:</b> Presentación y diario entregados al profesor.</p></div>
+  <div class="blq ex"><div class="blq-h"><span class="blq-n">14</span><div><b>Examen parcial de mecanismos</b><small>Esta clase no hay trabajo de proyecto.</small></div></div></div>
+  <div class="blq expo"><div class="blq-h"><span class="blq-n">15</span><div><b>Exposiciones del proyecto (1.ª parte)</b><small>Cada pareja: 6 minutos de exposición y preguntas del profesor.</small></div></div></div>
+  <div class="blq expo"><div class="blq-h"><span class="blq-n">16</span><div><b>Exposiciones del proyecto (2.ª parte)</b><small>Cada pareja: 6 minutos de exposición y preguntas del profesor.</small></div></div></div>
+  </div>
+</section></section>
+<section class="panel" id="p-fases" data-panel="fases" role="tabpanel" aria-labelledby="t-fases"><h2 class="ph">Guía de investigación</h2>
+<section class="tsec">
+  <h3><span class="num">🔄</span> Las 8 fases del ciclo de vida</h3>
+  <p>El <b>ciclo de vida</b> de un producto son todas las etapas por las que pasa, desde la idea hasta que se convierte en residuo. Estudiarlo sirve para mejorar el producto: hacerlo de más calidad, más duradero y con menos impacto ambiental. Esa mejora constante se llama <b>mejora continua</b>.</p>
+  <svg viewBox="0 0 480 430" class="fig-svg cyc" role="img" aria-label="Diagrama circular con las 8 fases del ciclo de vida">
+  <defs><marker id="cy-ar" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--acc)"/></marker></defs><path d="M291.2,65.5 A158,158 0 0,1 309.5,73.1" fill="none" stroke="var(--acc)" stroke-width="3" marker-end="url(#cy-ar)"/><path d="M381.9,145.5 A158,158 0 0,1 389.5,163.8" fill="none" stroke="var(--acc)" stroke-width="3" marker-end="url(#cy-ar)"/><path d="M389.5,266.2 A158,158 0 0,1 381.9,284.5" fill="none" stroke="var(--acc)" stroke-width="3" marker-end="url(#cy-ar)"/><path d="M309.5,356.9 A158,158 0 0,1 291.2,364.5" fill="none" stroke="var(--acc)" stroke-width="3" marker-end="url(#cy-ar)"/><path d="M188.8,364.5 A158,158 0 0,1 170.5,356.9" fill="none" stroke="var(--acc)" stroke-width="3" marker-end="url(#cy-ar)"/><path d="M98.1,284.5 A158,158 0 0,1 90.5,266.2" fill="none" stroke="var(--acc)" stroke-width="3" marker-end="url(#cy-ar)"/><path d="M90.5,163.8 A158,158 0 0,1 98.1,145.5" fill="none" stroke="var(--acc)" stroke-width="3" marker-end="url(#cy-ar)"/><path d="M170.5,73.1 A158,158 0 0,1 188.8,65.5" fill="none" stroke="var(--acc)" stroke-width="3" marker-end="url(#cy-ar)"/><circle cx="240.0" cy="57.0" r="46" fill="var(--pri-l)" stroke="var(--pri)" stroke-width="2"/>
+    <text x="240.0" y="43.0" text-anchor="middle" class="cy-n">1</text>
+    <text x="240.0" y="61.0" text-anchor="middle" class="cy-t">Necesidad e</text><text x="240.0" y="73.0" text-anchor="middle" class="cy-t">idea</text><circle cx="351.7" cy="103.3" r="46" fill="var(--pri-l)" stroke="var(--pri)" stroke-width="2"/>
+    <text x="351.7" y="95.3" text-anchor="middle" class="cy-n">2</text>
+    <text x="351.7" y="113.3" text-anchor="middle" class="cy-t">Diseño</text><circle cx="398.0" cy="215.0" r="46" fill="var(--pri-l)" stroke="var(--pri)" stroke-width="2"/>
+    <text x="398.0" y="207.0" text-anchor="middle" class="cy-n">3</text>
+    <text x="398.0" y="225.0" text-anchor="middle" class="cy-t">Materiales</text><circle cx="351.7" cy="326.7" r="46" fill="var(--pri-l)" stroke="var(--pri)" stroke-width="2"/>
+    <text x="351.7" y="312.7" text-anchor="middle" class="cy-n">4</text>
+    <text x="351.7" y="330.7" text-anchor="middle" class="cy-t">Fabricación</text><text x="351.7" y="342.7" text-anchor="middle" class="cy-t">y calidad</text><circle cx="240.0" cy="373.0" r="46" fill="var(--pri-l)" stroke="var(--pri)" stroke-width="2"/>
+    <text x="240.0" y="359.0" text-anchor="middle" class="cy-n">5</text>
+    <text x="240.0" y="377.0" text-anchor="middle" class="cy-t">Distribución</text><text x="240.0" y="389.0" text-anchor="middle" class="cy-t">y venta</text><circle cx="128.3" cy="326.7" r="46" fill="var(--pri-l)" stroke="var(--pri)" stroke-width="2"/>
+    <text x="128.3" y="312.7" text-anchor="middle" class="cy-n">6</text>
+    <text x="128.3" y="330.7" text-anchor="middle" class="cy-t">Uso y</text><text x="128.3" y="342.7" text-anchor="middle" class="cy-t">mantenimiento</text><circle cx="82.0" cy="215.0" r="46" fill="var(--pri-l)" stroke="var(--pri)" stroke-width="2"/>
+    <text x="82.0" y="207.0" text-anchor="middle" class="cy-n">7</text>
+    <text x="82.0" y="225.0" text-anchor="middle" class="cy-t">Fin de vida</text><circle cx="128.3" cy="103.3" r="46" fill="var(--pri-l)" stroke="var(--pri)" stroke-width="2"/>
+    <text x="128.3" y="89.3" text-anchor="middle" class="cy-n">8</text>
+    <text x="128.3" y="107.3" text-anchor="middle" class="cy-t">Mejora</text><text x="128.3" y="119.3" text-anchor="middle" class="cy-t">continua</text><text x="240" y="211" text-anchor="middle" class="cy-c">Ciclo de vida</text><text x="240" y="229" text-anchor="middle" class="cy-s">y mejora continua</text></svg>
+</section>
+<section class="tsec fase" id="f1"><h3><span class="num">1</span> 💡 Necesidad e idea</h3>
+  <p class="small">Preguntas que tenéis que responder:</p>
+  <ul class="pl"><li>¿Qué necesidad o problema resuelve el producto?</li><li>¿Quién lo usa? ¿Dónde y cuándo?</li><li>¿Cómo y cuándo surgió? ¿Qué había antes?</li><li>¿Qué productos de la competencia existen y en qué se diferencian?</li></ul>
+  <div class="kw"><b>Palabras clave:</b> <span>necesidad</span><span>usuario</span><span>estudio de mercado</span><span>competencia</span></div></section>
+<section class="tsec fase" id="f2"><h3><span class="num">2</span> ✏️ Diseño y desarrollo</h3>
+  <p class="small">Preguntas que tenéis que responder:</p>
+  <ul class="pl"><li>¿Cómo se pasa de la idea al producto? Bocetos, croquis, planos y modelos 3D.</li><li>¿Qué prototipos y pruebas se hacen antes de fabricar?</li><li>¿Qué normas debe cumplir (UNE, ISO, marcado CE…)?</li><li>¿Está protegido por alguna patente o marca?</li></ul>
+  <div class="kw"><b>Palabras clave:</b> <span>boceto</span><span>croquis</span><span>plano</span><span>prototipo</span><span>normalización</span></div></section>
+<section class="tsec fase" id="f3"><h3><span class="num">3</span> 🧱 Materiales</h3>
+  <p class="small">Preguntas que tenéis que responder:</p>
+  <ul class="pl"><li>¿De qué materiales están hechas sus piezas principales?</li><li>¿Por qué se eligen esos materiales? Relaciónalo con sus propiedades (resistencia, ligereza, dureza, precio…).</li><li>¿De dónde salen las materias primas?</li></ul>
+  <div class="kw"><b>Palabras clave:</b> <span>materia prima</span><span>material</span><span>propiedades</span><span>sostenibilidad</span></div></section>
+<section class="tsec fase" id="f4"><h3><span class="num">4</span> 🏭 Fabricación y control de calidad</h3>
+  <p class="small">Preguntas que tenéis que responder:</p>
+  <ul class="pl"><li>¿Qué procesos se usan para fabricar las piezas (moldeo, mecanizado, soldadura, inyección…) y para montarlas?</li><li>¿Dónde se fabrica?</li><li>¿Cómo se controla la calidad: inspecciones, ensayos, muestras, normas como ISO 9001?</li></ul>
+  <div class="kw"><b>Palabras clave:</b> <span>proceso de fabricación</span><span>montaje</span><span>control de calidad</span><span>ensayo</span></div></section>
+<section class="tsec fase" id="f5"><h3><span class="num">5</span> 🚚 Distribución y comercialización</h3>
+  <p class="small">Preguntas que tenéis que responder:</p>
+  <ul class="pl"><li>¿Cómo se embala, se almacena y se transporta hasta la tienda o el cliente?</li><li>¿A qué precio se vende y a qué público se dirige?</li><li>¿Cómo se anuncia (publicidad, redes, marca)?</li></ul>
+  <div class="kw"><b>Palabras clave:</b> <span>logística</span><span>embalaje</span><span>distribución</span><span>marketing</span></div></section>
+<section class="tsec fase" id="f6"><h3><span class="num">6</span> 🔧 Uso y mantenimiento</h3>
+  <p class="small">Preguntas que tenéis que responder:</p>
+  <ul class="pl"><li>¿Cuánto dura (vida útil)? ¿Qué mantenimiento necesita?</li><li>¿Se puede reparar fácilmente? ¿Hay piezas de repuesto?</li><li>¿Consume energía durante su uso?</li><li>¿Le afecta la obsolescencia programada o la obsolescencia percibida (moda)?</li></ul>
+  <div class="kw"><b>Palabras clave:</b> <span>vida útil</span><span>mantenimiento</span><span>reparabilidad</span><span>obsolescencia</span></div></section>
+<section class="tsec fase" id="f7"><h3><span class="num">7</span> ♻️ Fin de vida</h3>
+  <p class="small">Preguntas que tenéis que responder:</p>
+  <ul class="pl"><li>¿Qué pasa con el producto cuando ya no sirve?</li><li>¿Se puede reutilizar, reparar, reciclar? ¿Qué partes?</li><li>¿Dónde se deposita el residuo (contenedor, punto limpio, recogida de aparatos eléctricos)?</li><li>¿Qué es la economía circular y cómo se aplica a este producto?</li></ul>
+  <div class="kw"><b>Palabras clave:</b> <span>reutilizar</span><span>reciclar</span><span>residuo</span><span>economía circular</span></div></section>
+<section class="tsec fase" id="f8"><h3><span class="num">8</span> 📈 Mejora continua</h3>
+  <p class="small">Preguntas que tenéis que responder:</p>
+  <ul class="pl"><li>¿Cuál es su mayor impacto ambiental y en qué fase se produce?</li><li>¿Cómo ha mejorado el producto con el tiempo?</li><li>Vuestra propuesta: ¿qué cambiaríais para que sea más sostenible, más duradero o más fácil de reparar? Justificadlo.</li></ul>
+  <div class="kw"><b>Palabras clave:</b> <span>mejora continua</span><span>ecodiseño</span><span>impacto ambiental</span><span>huella de carbono</span></div></section>
+<section class="tsec">
+  <h3><span class="num">🔎</span> Dónde buscar</h3>
+  <ul class="pl">
+    <li>Web oficial del fabricante: especificaciones, materiales, informes de sostenibilidad.</li>
+    <li>Organismos oficiales y asociaciones (normas, reciclaje, residuos).</li>
+    <li>Revistas de ciencia y tecnología, y vídeos de procesos de fabricación de fuentes reconocibles.</li>
+    <li>Contrastad cada dato importante en al menos dos fuentes.</li>
+  </ul>
+</section></section>
+<section class="panel" id="p-expo" data-panel="expo" role="tabpanel" aria-labelledby="t-expo"><h2 class="ph">Presentación y exposición</h2>
+<section class="tsec">
+  <h3><span class="num">🖥</span> Estructura de la presentación</h3>
+  <ol class="pl"><li>Portada: producto, nombres, curso y fecha.</li><li>Fase 1 · Necesidad e idea.</li><li>Fase 2 · Diseño y desarrollo.</li><li>Fase 3 · Materiales.</li><li>Fase 4 · Fabricación y control de calidad.</li><li>Fase 5 · Distribución y comercialización.</li><li>Fase 6 · Uso y mantenimiento.</li><li>Fase 7 · Fin de vida.</li><li>Fase 8 · Mejora continua y vuestra propuesta.</li><li>Diagrama del ciclo de vida de vuestro producto.</li><li>Conclusiones.</li><li>Fuentes consultadas.</li></ol>
+  <div class="callout"><b>Consejo:</b> en las diapositivas, imágenes, esquemas y palabras clave. Lo demás lo contáis vosotros. Cada imagen debe llevar su fuente.</div>
+</section>
+<section class="tsec">
+  <h3><span class="num">🎤</span> La exposición</h3>
+  <div class="tips">
+    <div class="tip"><b>6 minutos</b> como máximo. Ensayadla con cronómetro.</div>
+    <div class="tip"><b>Los dos</b> exponéis más o menos el mismo tiempo.</div>
+    <div class="tip"><b>No leáis</b>: podéis llevar una tarjeta con palabras clave.</div>
+    <div class="tip"><b>Preguntas</b>: el profesor puede preguntar a cualquiera de los dos sobre cualquier fase.</div>
+  </div>
+</section>
+<section class="tsec">
+  <h3><span class="num">📏</span> Normas del proyecto</h3>
+  <ul class="pl">
+    <li>Todo lo que uséis (textos, datos, imágenes) debe tener su <b>fuente</b>. Copiar sin citar se considera no presentado en ese apartado.</li>
+    <li>Escribid con vuestras palabras. Tenéis que entender todo lo que presentáis.</li>
+    <li>Si usáis inteligencia artificial, solo como apoyo para buscar ideas; comprobad cada dato en una fuente y decid en la presentación cómo la habéis usado.</li>
+    <li>El diario de trabajo se rellena en clase, al final de cada bloque.</li>
+  </ul>
+</section></section>
+<section class="panel" id="p-rubrica" data-panel="rubrica" role="tabpanel" aria-labelledby="t-rubrica"><h2 class="ph">Rúbrica</h2>
+<section class="tsec">
+  <h3><span class="num">📊</span> Rúbrica del proyecto</h3>
+  <p class="small">Cada apartado se puntúa de 0 a 10. La nota de cada criterio es la media de sus apartados, y la nota del proyecto es la media ponderada de los criterios.</p>
+  <div class="rb">
+    <div class="crit"><div class="crit-n">2.1</div><div><b>Criterio de evaluación 2.1 · 50 % del proyecto</b><p>Determinar el ciclo de vida de un producto, planificando y aplicando medidas de control de calidad en sus distintas etapas, desde el diseño a la comercialización, teniendo en consideración estrategias de mejora continua.</p></div></div>
+    <div class="tablewrap"><table class="tt rb-t"><thead><tr><th>Apartado</th><th>Excelente<small>10–9</small></th><th>Bien<small>8–7</small></th><th>Suficiente<small>6–5</small></th><th>Insuficiente<small>&lt;5</small></th></tr></thead><tbody>
+    <tr><td><b>Ciclo de vida completo</b></td><td>Explica las 8 fases con datos concretos del producto, sin errores.</td><td>Explica todas las fases, alguna con poco detalle.</td><td>Faltan fases o se explican de forma general, sin datos del producto.</td><td>Faltan muchas fases o hay errores importantes.</td></tr><tr><td><b>Control de calidad</b></td><td>Explica cómo se controla la calidad en varias etapas (ensayos, inspecciones, normas).</td><td>Explica el control de calidad en alguna etapa.</td><td>Lo menciona sin explicarlo.</td><td>No aparece.</td></tr><tr><td><b>Mejora continua</b></td><td>Propuesta de mejora original, concreta y bien justificada (sostenibilidad, durabilidad, reparación).</td><td>Propuesta concreta, con justificación breve.</td><td>Propuesta vaga o sin justificar.</td><td>No hay propuesta.</td></tr>
+    </tbody></table></div></div>
+<div class="rb">
+    <div class="crit"><div class="crit-n">1.1</div><div><b>Criterio de evaluación 1.1 · 25 % del proyecto</b><p>Investigar y diseñar proyectos que muestren de forma gráfica la creación y mejora de un producto, seleccionando, referenciando e interpretando información relacionada.</p></div></div>
+    <div class="tablewrap"><table class="tt rb-t"><thead><tr><th>Apartado</th><th>Excelente<small>10–9</small></th><th>Bien<small>8–7</small></th><th>Suficiente<small>6–5</small></th><th>Insuficiente<small>&lt;5</small></th></tr></thead><tbody>
+    <tr><td><b>Fuentes</b></td><td>Al menos 5 fuentes fiables y variadas, citadas con su enlace; la información está contrastada.</td><td>3 o 4 fuentes fiables citadas.</td><td>Pocas fuentes o poco fiables, citadas a medias.</td><td>Sin fuentes o copiado sin citar.</td></tr><tr><td><b>Diagrama del ciclo de vida</b></td><td>Diagrama claro, propio y completo, con las 8 fases del producto.</td><td>Diagrama completo con algún fallo.</td><td>Diagrama incompleto o genérico.</td><td>No hay diagrama.</td></tr><tr><td><b>Diario de trabajo</b></td><td>Una entrada por clase, con lo que hizo cada uno.</td><td>Faltan pocas entradas.</td><td>Faltan bastantes entradas.</td><td>No hay diario.</td></tr>
+    </tbody></table></div></div>
+<div class="rb">
+    <div class="crit"><div class="crit-n">1.5</div><div><b>Criterio de evaluación 1.5 · 25 % del proyecto</b><p>Comunicar de manera eficaz y organizada las ideas y soluciones tecnológicas, empleando el soporte, la terminología y el rigor apropiados.</p></div></div>
+    <div class="tablewrap"><table class="tt rb-t"><thead><tr><th>Apartado</th><th>Excelente<small>10–9</small></th><th>Bien<small>8–7</small></th><th>Suficiente<small>6–5</small></th><th>Insuficiente<small>&lt;5</small></th></tr></thead><tbody>
+    <tr><td><b>Exposición oral</b></td><td>Clara, ordenada y sin leer; los dos participan por igual; ajustada a 6 minutos.</td><td>Clara, con algún apoyo en la lectura o desajuste de tiempo.</td><td>Leída en gran parte o desequilibrada entre los dos.</td><td>Leída por completo o muy desorganizada.</td></tr><tr><td><b>Presentación</b></td><td>Visual, poco texto, imágenes con fuente y sin faltas de ortografía.</td><td>Correcta, con algo de exceso de texto.</td><td>Mucho texto o poco cuidada.</td><td>Muy pobre o sin terminar.</td></tr><tr><td><b>Vocabulario técnico y preguntas</b></td><td>Usa con precisión los términos técnicos y responde bien a las preguntas.</td><td>Usa bien la mayoría de términos; responde a casi todo.</td><td>Vocabulario poco técnico; le cuesta responder.</td><td>No sabe responder.</td></tr>
+    </tbody></table></div></div>
+</section></section>
+</main>
+<footer class="foot">Tecnología e Ingeniería I · Proyecto de investigación
+<div class="fe-wrap"><button type="button" class="fe-seal" id="feSeal" aria-haspopup="dialog" aria-controls="feDlg"><svg class="fe-cross" viewBox="0 0 24 32" aria-hidden="true" focusable="false"><path d="M10 0h4v9h7v4h-7v19h-4V13H3V9h7z"/></svg><span>Una inspiración, un don y un servicio</span></button></div>
+</footer>
+<dialog class="fe-dlg" id="feDlg" aria-labelledby="feTit">
+  <div class="fe-box">
+    <button type="button" class="fe-x" id="feClose" aria-label="Cerrar">×</button>
+    <h2 id="feTit"><span class="fe-c" aria-hidden="true">✝</span> Una inspiración, un don y un servicio</h2>
+    <p>Reconozco en Dios el origen de mis talentos, de mi creatividad y de la inspiración que me impulsa a desarrollar estas herramientas.</p>
+    <p>Con gratitud al Señor, pongo mi trabajo y sus frutos al servicio de los demás, con el deseo de facilitar tareas, resolver necesidades y contribuir, aunque sea modestamente, a mejorar la vida de las personas.</p>
+    <p>A Él ofrezco este trabajo, con sus aciertos, sus limitaciones y todo lo que aún queda por aprender y mejorar.</p>
+    <blockquote><p>«Todo buen regalo y todo don perfecto viene de arriba».</p><cite>Santiago 1,17</cite></blockquote>
+    <blockquote><p>«Poned al servicio de los demás el carisma que cada uno ha recibido».</p><cite>1 Pedro 4,10</cite></blockquote>
+    <div class="fe-act"><button type="button" class="btn-pdf" id="feOk">Cerrar</button></div>
+  </div>
+</dialog>
+</div>
+<script>(function () {
+  'use strict';
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var root = document.documentElement, PFX = 'proy26.';
+  var LS = {
+    get: function (k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* sin almacenamiento */ } }
+  };
+
+  /* ---------- pestañas ---------- */
+  var tabs = $$('.tabs [role="tab"]');
+  function showTab(name, focus) {
+    var ok = false;
+    tabs.forEach(function (b) {
+      var on = b.dataset.tab === name; if (on) ok = true;
+      b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1;
+      if (on && focus) b.focus();
+    });
+    if (!ok) return false;
+    $$('.panel').forEach(function (p) { p.classList.toggle('active', p.dataset.panel === name); });
+    LS.set(PFX + 'tab', name);
+    return true;
+  }
+  $('.tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('[role="tab"]'); if (!b) return;
+    showTab(b.dataset.tab);
+    var y = $('.tabs').getBoundingClientRect().top + window.pageYOffset;
+    if (window.pageYOffset > y) window.scrollTo(0, y);
+  });
+  $('.tabs').addEventListener('keydown', function (e) {
+    var i = tabs.indexOf(document.activeElement); if (i < 0) return;
+    var j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : null;
+    if (j === null) return;
+    e.preventDefault(); j = (j + tabs.length) % tabs.length; showTab(tabs[j].dataset.tab, true);
+  });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('.go-tab'); if (!a) return;
+    e.preventDefault(); showTab(a.dataset.tab); window.scrollTo(0, 0);
+  });
+
+  /* ---------- enlaces a un bloque (#b5) o a una pestaña (#rubrica) ---------- */
+  function fromHash() {
+    var h = (location.hash || '').slice(1); if (!h) return false;
+    if (/^b\d+$/.test(h) && document.getElementById(h)) {
+      showTab('calendario');
+      var el = document.getElementById(h);
+      $$('.blq.hl').forEach(function (x) { x.classList.remove('hl'); });
+      el.classList.add('hl');
+      setTimeout(function () { el.scrollIntoView({ block: 'start' }); }, 30);
+      return true;
+    }
+    if (/^f\d+$/.test(h) && document.getElementById(h)) { showTab('fases'); setTimeout(function () { document.getElementById(h).scrollIntoView({ block: 'start' }); }, 30); return true; }
+    return showTab(h);
+  }
+  window.addEventListener('hashchange', fromHash);
+  if (!fromHash()) { var last = LS.get(PFX + 'tab'); if (last) showTab(last); }
+
+  /* ---------- casillas ---------- */
+  var done = {};
+  try { done = JSON.parse(LS.get(PFX + 'chk') || '{}') || {}; } catch (e) { done = {}; }
+  $$('.check input[data-k]').forEach(function (c) {
+    c.checked = !!done[c.dataset.k];
+    c.addEventListener('change', function () { if (c.checked) done[c.dataset.k] = 1; else delete done[c.dataset.k]; LS.set(PFX + 'chk', JSON.stringify(done)); });
+  });
+
+  /* ---------- temporizador ---------- */
+  var box = $('#timer'), disp = $('#tmD'), go = $('#tmGo'), rs = $('#tmR'), mins = $('#tmM'), big = $('#tmBig'), msg = $('#tmMsg');
+  var total = 900, left = 900, end = 0, iv = null;
+  function fmt(s) { s = Math.max(0, Math.ceil(s)); var m = Math.floor(s / 60), r = s % 60; return (m < 10 ? '0' : '') + m + ':' + (r < 10 ? '0' : '') + r; }
+  function draw() {
+    disp.textContent = fmt(left);
+    box.classList.toggle('low', left > 0 && left <= 120);
+    box.classList.toggle('done', left <= 0);
+  }
+  function tick() {
+    left = (end - Date.now()) / 1000;
+    if (left <= 0) { left = 0; stop(); msg.textContent = '¡Tiempo! Anotad en el diario lo que habéis hecho hoy.'; }
+    else if (left <= 120 && !msg.dataset.w) { msg.dataset.w = '1'; msg.textContent = 'Quedan 2 minutos: id rellenando el diario de trabajo.'; }
+    draw();
+  }
+  function stop() { clearInterval(iv); iv = null; go.textContent = left > 0 ? 'Seguir' : 'Empezar'; }
+  go.addEventListener('click', function () {
+    if (iv) { stop(); return; }
+    if (left <= 0) { left = total; msg.textContent = ''; delete msg.dataset.w; }
+    end = Date.now() + left * 1000; iv = setInterval(tick, 250); go.textContent = 'Pausar'; tick();
+  });
+  function reset() { stop(); total = (parseInt(mins.value, 10) || 15) * 60; left = total; msg.textContent = ''; delete msg.dataset.w; go.textContent = 'Empezar'; draw(); }
+  rs.addEventListener('click', reset);
+  mins.addEventListener('change', reset);
+  function setBig(on) {
+    box.classList.toggle('big', on); root.classList.toggle('tm-lock', on);
+    big.setAttribute('aria-pressed', on ? 'true' : 'false'); big.textContent = on ? 'Salir de pantalla grande' : 'Pantalla grande';
+  }
+  big.addEventListener('click', function () { setBig(!box.classList.contains('big')); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && box.classList.contains('big')) setBig(false); });
+  draw();
+
+  /* ---------- PDF ---------- */
+  function flash(t) { msg2.textContent = t; msg2.hidden = false; clearTimeout(flash.t); flash.t = setTimeout(function () { msg2.hidden = true; }, 3000); }
+  var msg2 = $('#pdfMsg');
+  function prep() { root.classList.add('printing'); root.dataset.print = 'pall'; if (box.classList.contains('big')) setBig(false); }
+  function restore() { root.classList.remove('printing'); delete root.dataset.print; }
+  window.addEventListener('beforeprint', function () { if (!root.classList.contains('printing')) prep(); });
+  window.addEventListener('afterprint', restore);
+  function framed() { try { return window.self !== window.top; } catch (e) { return true; } }
+  $('#pdfBtn').addEventListener('click', function () {
+    if (framed()) { flash('Abre la página en una pestaña nueva para descargar el PDF.'); return; }
+    prep(); flash('En el cuadro de impresión, elige «Guardar como PDF».');
+    setTimeout(function () { window.print(); }, 120);
+  });
+})();
+</script>
+<script>// Sello de identidad: ventana informativa independiente del resto de la aplicación
+(function () {
+  'use strict';
+  var seal = document.getElementById('feSeal'), dlg = document.getElementById('feDlg');
+  if (!seal || !dlg) return;
+  var native = typeof dlg.showModal === 'function', last = null;
+  function open() {
+    last = document.activeElement;
+    if (native) { if (!dlg.open) dlg.showModal(); } else { dlg.setAttribute('open', ''); dlg.classList.add('fe-fallback'); }
+    document.documentElement.classList.add('fe-lock');
+    var c = document.getElementById('feClose'); if (c) c.focus();
+  }
+  function close() {
+    if (native) { if (dlg.open) dlg.close(); } else { dlg.removeAttribute('open'); dlg.classList.remove('fe-fallback'); afterClose(); }
+  }
+  function afterClose() {
+    document.documentElement.classList.remove('fe-lock');
+    if (last && typeof last.focus === 'function') last.focus(); else seal.focus();
+  }
+  seal.addEventListener('click', open);
+  document.getElementById('feClose').addEventListener('click', close);
+  document.getElementById('feOk').addEventListener('click', close);
+  if (native) dlg.addEventListener('close', afterClose);
+  // pulsar fuera de la ventana (en el fondo oscuro) la cierra
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) close(); });
+  // Escape (el diálogo nativo ya lo hace; esto cubre el modo alternativo) y foco atrapado dentro
+  dlg.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+    if (e.key !== 'Tab') return;
+    var f = dlg.querySelectorAll('button'); if (!f.length) return;
+    var first = f[0], lastB = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); lastB.focus(); }
+    else if (!e.shiftKey && document.activeElement === lastB) { e.preventDefault(); first.focus(); }
+  });
+})();
+</script>
+</body>
+</html>
